@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{vozvrat}"></title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" th:text="#{home}">Bosh sahifa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active"  aria-current="page" href="/user/profile" th:text="#{account}">Akkaunt</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/vozvrat-tovar/list" th:text="#{vozvrat}">Tovar qaytarilishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/tovar/list" th:text="#{tovar}">Tovar</a>
+                </li>
+            </ul>
+            <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
+        </div>
+    </div>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <form action="/prixod-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
+            <div class="d-flex" style="margin-bottom: 10px">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <input type="hidden" name="prixodTovarId" th:value="${response.data.id}">
+                <input type="hidden" name="miqdori" value="1">
+                <div class="mr-2" style="margin-right: 10px">
+                    <input type="text" class="form-control w-auto" name="shtrixKod" autofocus>
+                </div>
+                <br>
+                <div class="mr-2" style="margin-right: 10px">
+                    <input type="submit" class="btn btn-success" th:value="#{save}">
+                </div>
+                <br>
+                <div class="mr-2" style="margin-left: 150px">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}" id="csrfToken">
+                    <input type="hidden" name="id" th:value="${response.data.id}" id="dataId">
+                    <button type="button" class="btn btn-success" id="confirmButton" th:text="#{confirm}"></button>
+                </div>
+                <br>
+                <script>
+                    document.getElementById('confirmButton').addEventListener('click', function () {
+                        // Input maydonlaridagi qiymatlarni olish
+                        const csrfToken = document.getElementById('csrfToken').value;
+                        const dataId = document.getElementById('dataId').value;
+
+                        // Dinamik forma yaratish
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/prixod-tovar/end'; // POST API endpoint
+
+                        // CSRF token qo'shish
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken;
+                        form.appendChild(csrfInput);
+
+                        // ID qo'shish
+                        const idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'id';
+                        idInput.value = dataId;
+                        form.appendChild(idInput);
+
+                        // Formani body ichiga qo'shib yuborish
+                        document.body.appendChild(form);
+
+                        // Formani yuborish
+                        form.submit();
+                    });
+                </script>
+                <!--<form action="/prixod-tovar/end" method="post" enctype="application/x-www-form-urlencoded">
+                    <div class="mr-2" style="margin-left: 150px">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                        <input type="hidden" name="id" th:value="${response.data.id}">
+                        <input type="submit" class="btn btn-success" th:value="#{confirm}">
+                    </div>
+                    <br>
+                </form>-->
+            </div>
+        </form>
+        <style>
+            th,td{
+                text-align: center;
+            }
+        </style>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th><h3 th:text="#{rasm}"></h3></th>
+                <th><h3 th:text="#{nomi}"></h3></th>
+                <th><h3 th:text="#{shtrix_kod}"></h3></th>
+                <th><h3 th:text="#{miqdori}"></h3></th>
+                <th><h3 th:text="#{summasi}"></h3></th>
+                <th><h3>#</h3></th>
+                <th><h3>#</h3></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r:${response.data.details}">
+                <td><a th:href="'/tovar/find/'+${r.tovarId}"><img th:src="'/tovar/image/'+${r.tovarRasmi}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
+                <td><h3 th:text="${r.tovarNomi}"></h3></td>
+                <td><h3 th:text="${r.shtrixKod}"></h3></td>
+                <form action="/prixod-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                    <input type="hidden" name="shtrixKod" th:value="${r.shtrixKod}">
+                    <input type="hidden" name="prixodTovarId" th:value="${response.data.id}">
+                    <td><input step="0.01" type="number" name="miqdori" class="form-control w-auto" th:value="${r.miqdori}" required></td>
+                    <td><h3 th:text="${r.summasi}"></h3></td>
+                    <td><input class="btn btn-primary" type="submit" th:value="#{hisob}"></td>
+                </form>
+                <form action="/vozvrat-tovar/delete-detail" method="post" enctype="application/x-www-form-urlencoded">
+                    <input type="hidden" name="detailId" th:value="${r.id}">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                    <input type="hidden" name="vozvratTovarId" th:value="${r.vozvratTovarId}">
+                    <td><button type="submit" src="/images/trash.svg" class="btn btn-danger" th:value="'&#xF5DD; '+#{delete}" alt="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg></button></td>
+                </form>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><h3 th:text="${response.data.totalSumma}"></h3></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

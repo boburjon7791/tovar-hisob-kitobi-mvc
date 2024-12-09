@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{vozvrat}"></title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" th:text="#{home}">Bosh sahifa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active"  aria-current="page" href="/user/profile" th:text="#{account}">Akkaunt</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/vozvrat-tovar/list" th:text="#{vozvrat}">Tovar qaytarilishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/tovar/list" th:text="#{tovar}">Tovar</a>
+                </li>
+            </ul>
+            <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
+        </div>
+    </div>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <style>
+            th,td{
+                text-align: center;
+            }
+        </style>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th><h3 th:text="#{rasm}"></h3></th>
+                <th><h3 th:text="#{nomi}"></h3></th>
+                <th><h3 th:text="#{shtrix_kod}"></h3></th>
+                <th><h3 th:text="#{miqdori}"></h3></th>
+                <th><h3 th:text="#{summasi}"></h3></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r:${response.data.details}">
+                <td><a th:href="'/tovar/find/'+${r.tovarId}"><img th:src="'/tovar/image/'+${r.tovarRasmi}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
+                <td><h3 th:text="${r.tovarNomi}"></h3></td>
+                <td><h3 th:text="${r.shtrixKod}"></h3></td>
+                <td><h3 th:text="${r.miqdori}"></h3></td>
+                <td><h3 th:text="${r.summasi}"></h3></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><h3 th:text="${response.data.totalSumma}"></h3></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

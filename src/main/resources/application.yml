@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: tovar-hisob-kitobi-mvc
+  threads:
+    virtual:
+      enabled: true
+  profiles:
+    active:
+      - local
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  session:
+    store-type: jdbc
+server:
+  port: 8081
+  servlet:
+    session:
+      cookie:
+        name: TOVAR_HISOB_KITOB_MVC_SESSION_ID

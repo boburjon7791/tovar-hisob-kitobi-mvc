@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{home}">Bosh sahifa</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" th:text="#{home}">Bosh sahifa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active"  aria-current="page" href="/user/profile" th:text="#{account}">Akkaunt</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/vozvrat-tovar/list" th:text="#{vozvrat}">Tovar qaytarilishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/tovar/list" th:text="#{tovar}">Tovar</a>
+                </li>
+            </ul>
+            <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
+            <form class="d-flex" action="#" role="search">
+                <input class="form-control me-2" type="search" name="name" required th:placeholder="#{input}" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" th:text="#{search}" type="submit">Qidirish</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <form action="/daily/report/get" method="get" enctype="application/x-www-form-urlencoded">
+            <div class="d-flex" style="margin-bottom: 10px">
+                <div class="mr-2" style="margin-right: 10px">
+                    <input class="form-control w-auto" type="date" name="year" required>
+                </div>
+                <br>
+                <div class="mr-2" style="margin-right: 10px">
+                    <input type="date" class="form-control w-auto" name="month" required>
+                </div>
+                <br>
+                <div class="mr-2" style="margin-right: 10px">
+                    <input type="text" class="form-control w-auto" name="month" required>
+                </div>
+                <br>
+                <div class="mr-2" style="margin-right: 10px">
+                    <select class="form-control w-auto" name="month" required>
+                        <!--<option th:each="" th:text="" th:value="">
+                        </option>-->
+                    </select>
+                </div>
+                <br>
+                <input type="submit" class="btn btn-success" value="Qidirish">
+            </div>
+        </form>
+        <style>
+            th,td{
+                text-align: center;
+            }
+        </style>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th><h3>Yil</h3></th>
+                <th><h3>Oy</h3></th>
+                <th><h3>Kun</h3></th>
+                <th><h3>Umumiy qiymati</h3></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r:${reports}">
+                <td><h3><a th:text="${r.date.year}" th:href="@{'/monthly/report/get-year/'+${r.date.year}}"></a></h3></td>
+                <td><h3 th:text="${r.month.name()}"></h3></td>
+                <td><h3><a th:text="${r.date.dayOfMonth}" th:href="@{'/selling/get-date/'+${r.date.toLocalDate()}}"></a></h3></td>
+                <td><h3 th:text="${r.total}"></h3></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th><h3 th:text="${total}"></h3></th>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
