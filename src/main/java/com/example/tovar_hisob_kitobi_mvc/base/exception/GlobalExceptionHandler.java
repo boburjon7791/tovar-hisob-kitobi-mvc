@@ -7,6 +7,7 @@ import com.example.tovar_hisob_kitobi_mvc.base.controller.BaseControllerMVC;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -29,6 +31,22 @@ public class GlobalExceptionHandler {
         model.addAttribute(BaseControllerMVC._response, e.getMessage());
         addCustom(model);
         return "/errors/server-error";
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public String handler(AccessDeniedException e, Model model){
+        log.warn("Handle : {0}",e);
+        model.addAttribute(BaseControllerMVC._response, e.getMessage());
+        addCustom(model);
+        return "/errors/no-access";
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handler(NoResourceFoundException e, Model model){
+        log.warn("Handle : {0}",e);
+        model.addAttribute(BaseControllerMVC._response, e.getMessage());
+        addCustom(model);
+        return "/errors/not-found";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

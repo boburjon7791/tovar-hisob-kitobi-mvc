@@ -53,6 +53,9 @@ public class VozvratTovarDetailService extends BaseService<VozvratTovarDetail, U
         if (vozvratTovar.isTasdiqlandi()) {
             throw new ApiException(getLocalization().getMessage("vozvrat_allaqachon_tasdiqlangan"));
         }
+        if (requestDTO.izoh()!=null && !requestDTO.izoh().isBlank()) {
+            vozvratTovar.setIzoh(requestDTO.izoh());
+        }
         List<VozvratTovarDetail> vozvratTovarDetails = vozvratTovarDetailRepository.findAllByVozvratTovarId(requestDTO.vozvratTovarId(), Sort.unsorted());
         Tovar tovar = tovarService.findByShtrixKod(requestDTO.shtrixKod());
         List<RasxodTovarDetail> rasxodTovars = rasxodTovarDetailRepository.findAllByRasxodTovarId(vozvratTovar.getRasxodTovar().getId(), Sort.unsorted());

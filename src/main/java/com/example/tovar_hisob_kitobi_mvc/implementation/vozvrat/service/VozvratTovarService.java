@@ -67,6 +67,9 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
     @Transactional
     public ApiResponse<VozvratTovarResponseDTO> end(UUID id) {
         VozvratTovar entity = entity(id);
+        if (entity.getIzoh()==null || entity.getIzoh().isBlank()) {
+            throw new ApiException(getLocalization().getMessage("write_izoh"));
+        }
         if (!entity.isTasdiqlandi()) {
             entity.setTasdiqlandi(true);
             VozvratTovar saved = getBaseRepository().save(entity);

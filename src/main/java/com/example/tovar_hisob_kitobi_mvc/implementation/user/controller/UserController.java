@@ -13,6 +13,8 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.filtering.Us
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +39,8 @@ public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO
     }
 
     @GetMapping("/change-password/{id}")
-    public String changePassword(Model model, @PathVariable Long id){
+    public String changePassword(Model model, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        Utils.hasRole(id, Lavozim.DIRECTOR);
         model.addAttribute("id",id);
         return "auth/change-password";
     }
@@ -60,5 +63,19 @@ public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO
     public String changeRole(@RequestParam Lavozim lavozim, @RequestParam Long id){
         userService.changeRole(id, lavozim);
         return redirectList();
+    }
+
+    @Override
+    @GetMapping("/find/{id}")
+    public String findById(Long id, Model model) {
+        Utils.hasRole(id, Lavozim.DIRECTOR);
+        return super.findById(id, model);
+    }
+
+    @Override
+    @GetMapping("/list")
+    @PreAuthorize("hasAnyRole('DIRECTOR')")
+    public String findAll(UserFiltering request, Model model) {
+        return super.findAll(request, model);
     }
 }

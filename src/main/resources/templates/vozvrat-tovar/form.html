@@ -46,7 +46,7 @@
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                 <input type="hidden" name="vozvratTovarId" th:value="${response.data.id}">
                 <input type="hidden" name="miqdori" value="1">
-                <div class="mr-2" style="margin-right: 10px">
+                <div class="mr-2" style="margin-right: 30px">
                     <input type="text" class="form-control w-auto" name="shtrixKod" autofocus>
                 </div>
                 <br>
@@ -64,6 +64,10 @@
                         }
                     });
                 </script>
+                <div class="mr-2" style="margin-right: 10px">
+                    <input type="text" class="form-control" name="izoh" th:placeholder="#{izoh}+' ('+#{required}+')'" th:value="${response.data.izoh}" required>
+                </div>
+                <br>
                 <!--<div class="mr-2" style="margin-right: 10px">
                     <input type="submit" class="btn btn-success" th:value="#{save}">
                 </div>

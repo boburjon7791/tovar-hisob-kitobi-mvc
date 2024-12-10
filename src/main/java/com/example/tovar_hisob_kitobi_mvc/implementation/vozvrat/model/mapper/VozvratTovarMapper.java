@@ -28,13 +28,13 @@ public class VozvratTovarMapper implements BaseMapper<VozvratTovar, VozvratTovar
     public VozvratTovarResponseDTO toDto(VozvratTovar vozvratTovar) {
         User created = userService.entity(vozvratTovar.getCreatedBy());
         User updated = userService.entity(vozvratTovar.getUpdatedBy());
-        return new VozvratTovarResponseDTO(vozvratTovar.getId(), Utils.formatDate(vozvratTovar.getCreatedAt()), Utils.formatDate(vozvratTovar.getUpdatedAt()), created.getId(), updated.getUpdatedBy(), created.getFamilya()+" "+created.getIsm(), updated.getFamilya()+" "+updated.getIsm(), vozvratTovar.getTotalSumma(), null, vozvratTovar.isTasdiqlandi(), vozvratTovar.getRasxodTovar().getId());
+        return new VozvratTovarResponseDTO(vozvratTovar.getId(), Utils.formatDate(vozvratTovar.getCreatedAt()), Utils.formatDate(vozvratTovar.getUpdatedAt()), created.getId(), updated.getUpdatedBy(), created.getFamilya()+" "+created.getIsm(), updated.getFamilya()+" "+updated.getIsm(), vozvratTovar.getTotalSumma(), null, vozvratTovar.isTasdiqlandi(), vozvratTovar.getRasxodTovar().getId(), vozvratTovar.getIzoh());
     }
 
     public VozvratTovarResponseDTO toDto(VozvratTovar vozvratTovar, List<VozvratTovarDetailResponseDTO> vozvratTovarDetails) {
         User created = userService.entity(vozvratTovar.getCreatedBy());
         User updated = userService.entity(vozvratTovar.getUpdatedBy());
-        return new VozvratTovarResponseDTO(vozvratTovar.getId(), Utils.formatDate(vozvratTovar.getCreatedAt()), Utils.formatDate(vozvratTovar.getUpdatedAt()), created.getId(), updated.getUpdatedBy(), created.getFamilya()+" "+created.getIsm(), updated.getFamilya()+" "+updated.getIsm(), vozvratTovar.getTotalSumma(), vozvratTovarDetails, vozvratTovar.isTasdiqlandi(), vozvratTovar.getRasxodTovar().getId());
+        return new VozvratTovarResponseDTO(vozvratTovar.getId(), Utils.formatDate(vozvratTovar.getCreatedAt()), Utils.formatDate(vozvratTovar.getUpdatedAt()), created.getId(), updated.getUpdatedBy(), created.getFamilya()+" "+created.getIsm(), updated.getFamilya()+" "+updated.getIsm(), vozvratTovar.getTotalSumma(), vozvratTovarDetails, vozvratTovar.isTasdiqlandi(), vozvratTovar.getRasxodTovar().getId(), vozvratTovar.getIzoh());
     }
 
     @Override

@@ -15,6 +15,7 @@ public record VozvratTovarResponseDTO(
         BigDecimal totalSumma,
         List<VozvratTovarDetailResponseDTO> details,
         boolean tasdiqlandi,
-        UUID rasxodTovarId
+        UUID rasxodTovarId,
+        String izoh
 ) {
 }
