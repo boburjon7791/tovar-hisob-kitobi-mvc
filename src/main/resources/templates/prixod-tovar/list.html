@@ -51,18 +51,16 @@
                     <input type="date" class="form-control w-auto" name="toDate" th:value="${request.toDate}">
                 </div>
                 <br>
-                <div class="mr-2" style="margin-right: 10px">
+                <!--<div class="mr-2" style="margin-right: 10px">
                     <input type="text" class="form-control w-auto" name="search" th:value="${request.search}">
                 </div>
-                <br>
-                <!--<div class="mr-2" style="margin-right: 10px">
-                    <select class="form-control w-auto" name="month" required>
-                        &lt;!&ndash;<option th:each="l:${langs}" th:text="#{l}" th:value="${l}"
-                                th:attr="selected=${m.name() == #localeContext.locale.displayName ? 'selected' : ''}">
-                        </option>&ndash;&gt;
+                <br>-->
+                <div class="mr-2" style="margin-right: 10px">
+                    <select class="form-control w-auto" name="userId">
+                        <option th:each="u:${users}" th:text="${u.familya+' '+u.ism}" th:value="${u.id}"></option>
                     </select>
                 </div>
-                <br>-->
+                <br>
                 <input type="submit" style="margin-right: 30px" class="btn btn-success" th:value="#{search}">
                 <br>
                 <div class="mr-2">

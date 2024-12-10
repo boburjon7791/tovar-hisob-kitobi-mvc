@@ -1,8 +1,10 @@
 package com.example.tovar_hisob_kitobi_mvc.base.common;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.security.CustomUserDetails;
+import com.example.tovar_hisob_kitobi_mvc.base.model.entity.BaseEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,5 +24,8 @@ public class Utils {
     }
     public static String formatDate(LocalDateTime localDateTime){
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+    }
+    public static Sort sortByCreatedAtDesc(){
+        return Sort.by(Sort.Direction.DESC, BaseEntity._createdAt);
     }
 }

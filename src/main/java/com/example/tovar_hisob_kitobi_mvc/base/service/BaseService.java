@@ -3,6 +3,7 @@ package com.example.tovar_hisob_kitobi_mvc.base.service;
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.internationalization.Localization;
 import com.example.tovar_hisob_kitobi_mvc.base.common.PaginationResponse;
+import com.example.tovar_hisob_kitobi_mvc.base.controller.BaseControllerMVC;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.model.entity.BaseEntity;
 import com.example.tovar_hisob_kitobi_mvc.base.model.mapper.BaseMapper;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> {
@@ -27,9 +29,15 @@ public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERIN
     private BaseMapper<ENTITY, REQUEST_DTO, RESPONSE_DTO> baseMapper;
     private BaseSpecification<ENTITY, FILTERING> baseSpecification;
     private Localization localization;
+    private BaseControllerMVC<ENTITY,ID,REQUEST_DTO,RESPONSE_DTO,FILTERING> baseControllerMVC;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public void setBaseControllerMVC(@Lazy BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> baseControllerMVC) {
+        this.baseControllerMVC = baseControllerMVC;
+    }
 
     @Autowired
     public void setEntityManager(@Lazy EntityManager entityManager) {
@@ -91,7 +99,7 @@ public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERIN
     public ENTITY entity(ID id){
 //        String name = localization.getMessage(BaseEntity.class.getDeclaredAnnotation(Table.class).name());
         String notFound = localization.getMessage("not_found");
-        return baseRepository.findById(id).orElseThrow(() -> new ApiException(notFound));
+        return baseRepository.findById(id).orElseThrow(() -> new ApiException(entityLocalizationName()+" "+notFound));
     }
 
     public ENTITY saveEntity(ENTITY entity){
@@ -99,6 +107,11 @@ public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERIN
     }
 
     public List<RESPONSE_DTO> findAll(){
-        return baseRepository.findAll(Sort.by(Sort.Direction.DESC, BaseEntity._createdAt)).stream().map(baseMapper::toDto).toList();
+        return baseRepository.findAll(Sort.by(Sort.Direction.DESC, BaseEntity._createdAt)).stream().map(baseMapper::toDto).collect(Collectors.toList());
+    }
+
+    public String entityLocalizationName(){
+        String entityName = baseControllerMVC.apiPrefix().substring(1).replaceAll("-", "_");
+        return localization.getMessage(entityName);
     }
 }

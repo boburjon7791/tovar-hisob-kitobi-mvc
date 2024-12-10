@@ -15,6 +15,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarServ
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -49,7 +50,7 @@ public class RasxodTovarDetailService extends BaseService<RasxodTovarDetail, UUI
             throw new ApiException(getLocalization().getMessage("rasxod_allaqachon_tasdiqlangan"));
         }
         Tovar tovar = tovarService.findByShtrixKod(requestDTO.shtrixKod());
-        List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(requestDTO.rasxodTovarId());
+        List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(requestDTO.rasxodTovarId(), Sort.unsorted());
         rasxodTovarDetails.stream()
                 .filter(rasxodTovarDetail -> rasxodTovarDetail.getTovar().getShtrixKod().equals(requestDTO.shtrixKod()))
                 .findFirst()
@@ -59,7 +60,7 @@ public class RasxodTovarDetailService extends BaseService<RasxodTovarDetail, UUI
                 }, () -> {
                     RasxodTovarDetail rasxodTovarDetail = getBaseMapper().toEntity(requestDTO);
                     rasxodTovarDetail.setMiqdori(BigDecimal.ONE);
-                    rasxodTovarDetail.setSumma(tovar.getPrixodSumma());
+                    rasxodTovarDetail.setSumma(tovar.getRasxodSumma());
                     rasxodTovarDetail.setRasxodTovar(rasxodTovar);
                     rasxodTovarDetail.setTovar(tovar);
                     rasxodTovarDetails.add(rasxodTovarDetail);
@@ -71,7 +72,7 @@ public class RasxodTovarDetailService extends BaseService<RasxodTovarDetail, UUI
     }
 
     public void deleteAllByRasxodTovarId(UUID rasxodTovarId) {
-        rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovarId)
+        rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovarId, Sort.unsorted())
                 .forEach(rasxodTovarDetail -> {
                     rasxodTovarDetail.setDeleted(true);
                     rasxodTovarDetailRepository.save(rasxodTovarDetail);

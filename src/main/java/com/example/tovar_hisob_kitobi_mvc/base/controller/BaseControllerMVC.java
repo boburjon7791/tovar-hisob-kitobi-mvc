@@ -1,7 +1,10 @@
 package com.example.tovar_hisob_kitobi_mvc.base.controller;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
+import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserResponseDTO;
+import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -14,6 +17,12 @@ import java.util.List;
 public abstract class BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> {
     public static final String _response="response";
     private BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> baseService;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setBaseService(@Lazy BaseService<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> baseService) {
@@ -59,11 +68,34 @@ public abstract class BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, F
         ApiResponse<List<RESPONSE_DTO>> response = baseService.findAll(request);
         model.addAttribute(_response,response);
         model.addAttribute("request", request);
+        String userId = Utils.request().getParameter("userId");
+        if (userId!=null && !userId.isBlank()) {
+            model.addAttribute("user", userService.findById(Long.valueOf(userId)));
+        }
         return apiPrefix()+"/list";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteById(@PathVariable ID id){
+        baseService.deleteById(id);
         return redirectList();
+    }
+
+    public void addUsers(Model model, UserService userService){
+        String userId = Utils.request().getParameter("userId");
+        System.out.println("userId = " + userId);
+
+        List<UserResponseDTO> users = userService.findAll();
+        users.addFirst(UserResponseDTO.builder().ism("").familya("").build());
+        if (userId!=null && !userId.isBlank()) {
+            Long id=Long.valueOf(userId);
+            UserResponseDTO user = users.stream()
+                    .filter(userResponseDTO -> userResponseDTO.id()!=null && userResponseDTO.id().equals(id))
+                    .findFirst()
+                    .orElseThrow();
+            users.removeIf(userResponseDTO -> userResponseDTO.id()!=null && userResponseDTO.id().equals(id));
+            users.addFirst(user);
+        }
+        model.addAttribute("users", users);
     }
 }

@@ -41,19 +41,33 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="/prixod-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
+        <form action="/vozvrat-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
             <div class="d-flex" style="margin-bottom: 10px">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-                <input type="hidden" name="prixodTovarId" th:value="${response.data.id}">
+                <input type="hidden" name="vozvratTovarId" th:value="${response.data.id}">
                 <input type="hidden" name="miqdori" value="1">
                 <div class="mr-2" style="margin-right: 10px">
                     <input type="text" class="form-control w-auto" name="shtrixKod" autofocus>
                 </div>
                 <br>
-                <div class="mr-2" style="margin-right: 10px">
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const shtrixKodInput = document.querySelector("input[name='shtrixKod']");
+                        const form = shtrixKodInput.closest("form");
+
+                        if (shtrixKodInput && form) {
+                            shtrixKodInput.addEventListener("input", function () {
+                            if (shtrixKodInput.value.trim() !== "") {
+                                form.submit();
+                            }
+                        });
+                        }
+                    });
+                </script>
+                <!--<div class="mr-2" style="margin-right: 10px">
                     <input type="submit" class="btn btn-success" th:value="#{save}">
                 </div>
-                <br>
+                <br>-->
                 <div class="mr-2" style="margin-left: 150px">
                     <input type="hidden" name="_csrf" th:value="${_csrf.token}" id="csrfToken">
                     <input type="hidden" name="id" th:value="${response.data.id}" id="dataId">
@@ -69,7 +83,7 @@
                         // Dinamik forma yaratish
                         const form = document.createElement('form');
                         form.method = 'POST';
-                        form.action = '/prixod-tovar/end'; // POST API endpoint
+                        form.action = '/vozvrat-tovar/end'; // POST API endpoint
 
                         // CSRF token qo'shish
                         const csrfInput = document.createElement('input');
@@ -124,10 +138,10 @@
                 <td><a th:href="'/tovar/find/'+${r.tovarId}"><img th:src="'/tovar/image/'+${r.tovarRasmi}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
                 <td><h3 th:text="${r.tovarNomi}"></h3></td>
                 <td><h3 th:text="${r.shtrixKod}"></h3></td>
-                <form action="/prixod-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
+                <form action="/vozvrat-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
                     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                     <input type="hidden" name="shtrixKod" th:value="${r.shtrixKod}">
-                    <input type="hidden" name="prixodTovarId" th:value="${response.data.id}">
+                    <input type="hidden" name="vozvratTovarId" th:value="${response.data.id}">
                     <td><input step="0.01" type="number" name="miqdori" class="form-control w-auto" th:value="${r.miqdori}" required></td>
                     <td><h3 th:text="${r.summasi}"></h3></td>
                     <td><input class="btn btn-primary" type="submit" th:value="#{hisob}"></td>

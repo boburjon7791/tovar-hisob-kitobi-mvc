@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record VozvratTovarDetailResponseDTO(
+        UUID id,
         UUID vozvratTovarId,
         Long tovarId,
         String tovarNomi,
         String tovarRasmi,
         BigDecimal miqdori,
-        BigDecimal summasi
+        BigDecimal summasi,
+        String shtrixKod
 ) {
 }

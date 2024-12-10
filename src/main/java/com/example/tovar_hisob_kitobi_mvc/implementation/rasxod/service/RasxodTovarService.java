@@ -1,6 +1,7 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
@@ -18,6 +19,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarServ
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +69,7 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
             entity.setTasdiqlandi(true);
             RasxodTovar saved = getBaseRepository().save(entity);
             RasxodTovarResponseDTO responseDTO = getBaseMapper().toDto(saved);
-            List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(id);
+            List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(id, Sort.unsorted());
             if (rasxodTovarDetails.isEmpty()) {
                 throw new ApiException(getLocalization().getMessage("tovar_not_for_confirm"));
             }
@@ -81,7 +83,7 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
 
     @Transactional
     public ApiResponse<RasxodTovarResponseDTO> deleteDetail(UUID detailId, UUID rasxodTovarId) {
-        List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovarId);
+        List<RasxodTovarDetail> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovarId, Sort.unsorted());
         AtomicReference<RasxodTovarDetail> atomicReference=new AtomicReference<>();
         rasxodTovarDetails.removeIf(rasxodTovarDetail -> {
             atomicReference.set(rasxodTovarDetail);
@@ -100,15 +102,17 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
     @Override
     @Transactional
     public ApiResponse<Void> deleteById(UUID id) {
-        ApiResponse<Void> response = super.deleteById(id);
         rasxodTovarDetailService.deleteAllByRasxodTovarId(id);
-        return response;
+        RasxodTovar rasxodTovar = entity(id);
+        rasxodTovar.setDeleted(true);
+        getBaseRepository().save(rasxodTovar);
+        return ApiResponse.ok();
     }
 
     @Override
     public ApiResponse<RasxodTovarResponseDTO> findById(UUID id) {
         RasxodTovar rasxodTovar = entity(id);
-        List<RasxodTovarDetailResponseDTO> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(id).stream().map(rasxodTovarDetail -> rasxodTovarDetailService.getBaseMapper().toDto(rasxodTovarDetail)).toList();
+        List<RasxodTovarDetailResponseDTO> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(id, Utils.sortByCreatedAtDesc()).stream().map(rasxodTovarDetail -> rasxodTovarDetailService.getBaseMapper().toDto(rasxodTovarDetail)).toList();
         RasxodTovarResponseDTO responseDTO = rasxodTovarMapper.toDto(rasxodTovar, rasxodTovarDetails);
         return ApiResponse.ok(responseDTO);
     }

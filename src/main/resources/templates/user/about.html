@@ -42,48 +42,44 @@
         </div>
     </div>
 </nav>
-<form th:action="'/tovar/update/'+${response.data.id}" method="post" enctype="multipart/form-data">
+<form th:action="'/user/update/'+${response.data.id}" method="post" enctype="multipart/form-data">
     <div class="container d-flex justify-content-center align-items-center vh-90">
         <div class="card w-50"> <!-- Kenglikni w-50 qilib sozladik -->
             <div class="card-body">
-                <h1 class="text-success text-center" th:text="#{tovar}"></h1>
-                <div class="mb-3">
+                <h1 class="text-success text-center" th:text="#{user}"></h1>
+                <!--<div class="mb-3">
                     <span th:text="#{id}"></span>
                     <input type="button" name="id" class="form-control" th:value="${response.data.id}">
+                </div>-->
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <div class="mb-3">
+                    <span th:text="#{ism}"></span>
+                    <input type="text" class="form-control" name="ism" th:placeholder="#{ism}" th:value="${response.data.ism}" required>
                 </div>
                 <div class="mb-3">
-                    <span th:text="#{nomi}"></span>
-                    <input type="text" class="form-control" name="nomi" th:placeholder="#{nomi}" th:value="${response.data.nomi}" required>
+                    <span th:text="#{familya}"></span>
+                    <input type="text" class="form-control" name="familya" th:placeholder="#{familya}" th:value="${response.data.familya}" required>
                 </div>
                 <div class="mb-3">
-                    <img th:src="'/tovar/image/'+${response.data.rasm}" class="rounded mx-auto d-block" style="width: 300px" alt="No image">
-                    <span th:text="#{edit}"></span>
-                    <input type="file" class="form-control" name="file" th:placeholder="#{rasm}">
+                    <span th:text="#{login}"></span>
+                    <input type="text" class="form-control" name="login" th:placeholder="#{login}" th:value="${response.data.login}" required>
                 </div>
                 <div class="mb-3">
-                    <span th:text="#{shtrix_kod}"></span>
-                    <input type="button" class="form-control" th:value="${response.data.shtrixKod}">
+                    <span th:text="#{telefon}"></span>
+                    <input type="text" class="form-control" name="telefonRaqam" th:placeholder="#{telefon}" th:value="${response.data.telefonRaqam}" required>
                 </div>
                 <div class="mb-3">
-                    <span th:text="#{prixod_summa}"></span>
-                    <input type="number" step="0.01" class="form-control" name="prixodSumma" th:value="${response.data.prixodSumma}" th:placeholder="#{prixod_summa}" required>
-                </div>
-                <div class="mb-3">
-                    <span th:text="#{rasxod_summa}"></span>
-                    <input type="number" step="0.01" class="form-control" name="rasxodSumma" th:value="${response.data.rasxodSumma}" th:placeholder="#{rasxod_summa}" required>
-                </div>
-                <div class="mb-3">
-                    <span th:text="#{ostatka}"></span>
-                    <input type="button" class="form-control" th:value="${response.data.ostatka}" required th:placeholder="#{ostatka}">
-                </div>
-                <div class="mb-3">
-                    <span th:text="#{olchov_birligi}"></span>
-                    <input type="text" name="olchovBirligi" class="form-control" th:placeholder="#{olchov_birligi}" th:value="${response.data.olchovBirligi}" required>
+                    <span th:text="#{lavozim}"></span>
+                    <input type="text" class="form-control" th:value="${response.data.lavozim}" readonly>
                 </div>
                 <div class="text-center">
                     <input type="submit" class="btn btn-success" th:value="#{edit}">
-                    <a href="/tovar/list"><button type="button" class="btn btn-danger" th:text="#{cancel}"></button></a>
+                    <a sec:authorize="hasAnyRole('DIRECTOR')" href="/user/list"><button type="button" class="btn btn-primary" th:text="#{users}"></button></a>
+                    <a href="/auth/logout" type="button" class="btn btn-danger" th:text="#{logout}"></a>
+                    <a href="/user/profile"><button type="button" class="btn btn-danger" th:text="#{cancel}"></button></a>
                 </div>
+                <br>
+                <a th:href="'/user/change-password/'+${response.data.id}" th:text="#{change_password}"></a>
             </div>
         </div>
     </div>

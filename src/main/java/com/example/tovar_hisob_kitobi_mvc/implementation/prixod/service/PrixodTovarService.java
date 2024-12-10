@@ -1,6 +1,7 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.prixod.service;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarDetailResponseDTO;
@@ -16,6 +17,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +63,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
     }
 
     public ApiResponse<PrixodTovarResponseDTO> deleteDetail(UUID detailId, UUID prixodTovarId){
-        List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovarId);
+        List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovarId, Sort.unsorted());
         AtomicReference<PrixodTovarDetail> atomicReference=new AtomicReference<>();
         prixodTovarDetails.removeIf(prixodTovarDetail -> {
             atomicReference.set(prixodTovarDetail);
@@ -84,7 +86,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
             entity.setTasdiqlandi(true);
             PrixodTovar saved = getBaseRepository().save(entity);
             PrixodTovarResponseDTO responseDTO = getBaseMapper().toDto(saved);
-            List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(id);
+            List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(id, Sort.unsorted());
             if (prixodTovarDetails.isEmpty()) {
                 throw new ApiException(getLocalization().getMessage("tovar_not_for_confirm"));
             }
@@ -99,7 +101,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
     @Override
     public ApiResponse<PrixodTovarResponseDTO> findById(UUID id) {
         PrixodTovar prixodTovar = entity(id);
-        List<PrixodTovarDetailResponseDTO> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(id).stream().map(prixodTovarDetail -> prixodTovarDetailService.getBaseMapper().toDto(prixodTovarDetail)).toList();
+        List<PrixodTovarDetailResponseDTO> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(id, Utils.sortByCreatedAtDesc()).stream().map(prixodTovarDetail -> prixodTovarDetailService.getBaseMapper().toDto(prixodTovarDetail)).toList();
         PrixodTovarResponseDTO responseDTO = prixodTovarMapper.toDto(prixodTovar, prixodTovarDetails);
         return ApiResponse.ok(responseDTO);
     }
@@ -107,8 +109,10 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
     @Override
     @Transactional
     public ApiResponse<Void> deleteById(UUID id) {
-        ApiResponse<Void> response = super.deleteById(id);
         prixodTovarDetailService.deleteAllByPrixodTovarId(id);
-        return response;
+        PrixodTovar prixodTovar = entity(id);
+        prixodTovar.setDeleted(true);
+        getBaseRepository().save(prixodTovar);
+        return ApiResponse.ok();
     }
 }

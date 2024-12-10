@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @Table(name = "vozvrat_tovar")
 @Where(clause = "deleted=false")
 public class VozvratTovar extends BaseEntityUUID {
-    @Column(name = "total_summa", nullable = false)
+    @Column(name = "total_summa")
     private BigDecimal totalSumma;
 
     @ManyToOne

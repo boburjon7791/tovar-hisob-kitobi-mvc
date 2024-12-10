@@ -11,7 +11,7 @@ import java.util.List;
 public record CustomUserDetails(User user)implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getLavozim().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_"+user.getLavozim().name()));
     }
 
     @Override

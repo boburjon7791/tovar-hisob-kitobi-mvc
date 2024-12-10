@@ -79,6 +79,7 @@
             <thead>
             <tr>
                 <th><h3 th:text="#{id}"></h3></th>
+                <th><h3 th:text="#{created_at}"></h3></th>
                 <th><h3 th:text="#{rasm}"></h3></th>
                 <th><h3 th:text="#{nomi}"></h3></th>
                 <th><h3 th:text="#{shtrix_kod}"></h3></th>
@@ -91,6 +92,7 @@
             <tbody>
             <tr th:each="r:${response.data}">
                 <td><h3><a th:text="${r.id}"></a></h3></td>
+                <td><h3 th:text="${r.createdAt}"></h3></td>
                 <td><a th:href="'/tovar/find/'+${r.id}"><img th:src="'/tovar/image/'+${r.rasm}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
                 <td><h3 th:text="${r.nomi}"></h3></td>
                 <td><h3 th:text="${r.shtrixKod}"></h3></td>

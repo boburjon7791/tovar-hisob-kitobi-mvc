@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RasxodTovarDetailMapper implements BaseMapper<RasxodTovarDetail, RasxodTovarRequestDTO, RasxodTovarDetailResponseDTO> {
     private final RasxodTovarService rasxodTovarService;
-    private final TovarService tovarService;
     @Override
     public RasxodTovarDetail toEntity(RasxodTovarRequestDTO requestDTO) {
         return new RasxodTovarDetail(rasxodTovarService.entity(requestDTO.rasxodTovarId()), null, requestDTO.miqdori(), null);
@@ -22,7 +21,7 @@ public class RasxodTovarDetailMapper implements BaseMapper<RasxodTovarDetail, Ra
 
     @Override
     public RasxodTovarDetailResponseDTO toDto(RasxodTovarDetail rasxodTovarDetail) {
-        Tovar tovar = tovarService.entity(rasxodTovarDetail.getTovar().getId());
+        Tovar tovar = rasxodTovarDetail.getTovar();
         return new RasxodTovarDetailResponseDTO(rasxodTovarDetail.getId(), rasxodTovarDetail.getRasxodTovar().getId(), tovar.getId(), tovar.getNomi(), tovar.getRasmi(), rasxodTovarDetail.getMiqdori(), rasxodTovarDetail.getSumma(), tovar.getShtrixKod());
     }
 

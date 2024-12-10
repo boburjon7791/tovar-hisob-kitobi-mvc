@@ -35,4 +35,9 @@ public class User extends BaseEntityLongID {
 
     @Column(nullable = false, name = "telefon_raqam")
     private String telefonRaqam;
+
+    public static final String _ism="ism";
+    public static final String _familya="familya";
+    public static final String _login="login";
+    public static final String _telefonRaqam="telefonRaqam";
 }

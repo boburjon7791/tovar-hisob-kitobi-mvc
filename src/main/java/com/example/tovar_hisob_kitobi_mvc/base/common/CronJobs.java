@@ -14,8 +14,10 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -31,18 +33,20 @@ public class CronJobs {
     private final VozvratTovarDetailRepository vozvratTovarDetailRepository;
 
     @Scheduled(cron = "0 * * * * *")
+    @Transactional
     public void deleteUnconfirmedTransactions(){
-        prixodTovarRepository.findAll((root, query, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.equal(root.get(PrixodTovar._tasdiqlandi), false), criteriaBuilder.lessThan(root.get(BaseEntity._updatedAt), LocalDateTime.now().minusMinutes(30)))).forEach(prixodTovar -> {
-            prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovar.getId()).forEach(prixodTovarDetailRepository::delete);
+        LocalDateTime lastUpdatedAt=LocalDateTime.now().minusMinutes(30);
+        prixodTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(prixodTovar -> {
+            prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovar.getId(), Sort.unsorted()).forEach(prixodTovarDetailRepository::delete);
             prixodTovarRepository.delete(prixodTovar);
         });
-        rasxodTovarRepository.findAll((root, query, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.equal(root.get(RasxodTovar._tasdiqlandi), false), criteriaBuilder.lessThan(root.get(BaseEntity._updatedAt), LocalDateTime.now().minusMinutes(30)))).forEach(prixodTovar -> {
-            rasxodTovarDetailRepository.findAllByRasxodTovarId(prixodTovar.getId()).forEach(rasxodTovarDetailRepository::delete);
-            rasxodTovarRepository.delete(prixodTovar);
+        rasxodTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(rasxodTovar -> {
+            rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovar.getId(), Sort.unsorted()).forEach(rasxodTovarDetailRepository::delete);
+            rasxodTovarRepository.delete(rasxodTovar);
         });
-        vozvratTovarRepository.findAll((root, query, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.equal(root.get(VozvratTovar._tasdiqlandi),false), criteriaBuilder.lessThan(root.get(BaseEntity._updatedAt), LocalDateTime.now().minusMinutes(30)))).forEach(prixodTovar -> {
-            vozvratTovarDetailRepository.findAllByVozvratTovarId(prixodTovar.getId()).forEach(vozvratTovarDetailRepository::delete);
-            vozvratTovarRepository.delete(prixodTovar);
+        vozvratTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(vozvratTovar -> {
+            vozvratTovarDetailRepository.findAllByVozvratTovarId(vozvratTovar.getId(), Sort.unsorted()).forEach(vozvratTovarDetailRepository::delete);
+            vozvratTovarRepository.delete(vozvratTovar);
         });
     }
 }

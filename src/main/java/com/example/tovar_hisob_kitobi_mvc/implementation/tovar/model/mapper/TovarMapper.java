@@ -1,5 +1,6 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.tovar.model.mapper;
 
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.model.mapper.BaseMapper;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.model.dto.TovarRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.model.dto.TovarResponseDTO;
@@ -22,7 +23,7 @@ public class TovarMapper implements BaseMapper<Tovar, TovarRequestDTO,TovarRespo
 
     @Override
     public TovarResponseDTO toDto(Tovar tovar){
-        return new TovarResponseDTO(tovar.getId(), tovar.getCreatedAt(), tovar.getUpdatedAt(), tovar.getCreatedBy(), tovar.getUpdatedBy(), null, null, tovar.getOstatkasi(), tovar.getRasmi(), tovar.getPrixodSumma(), tovar.getRasxodSumma(), tovar.getNomi(), tovar.getShtrixKod(), tovar.getOlchovBirligi());
+        return new TovarResponseDTO(tovar.getId(), Utils.formatDate(tovar.getCreatedAt()), Utils.formatDate(tovar.getUpdatedAt()), tovar.getCreatedBy(), tovar.getUpdatedBy(), null, null, tovar.getOstatkasi(), tovar.getRasmi(), tovar.getPrixodSumma(), tovar.getRasxodSumma(), tovar.getNomi(), tovar.getShtrixKod(), tovar.getOlchovBirligi());
     }
 
     @Override

@@ -50,10 +50,24 @@
                     <input type="text" class="form-control w-auto" name="shtrixKod" autofocus>
                 </div>
                 <br>
-                <div class="mr-2" style="margin-right: 10px">
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const shtrixKodInput = document.querySelector("input[name='shtrixKod']");
+                        const form = shtrixKodInput.closest("form");
+
+                        if (shtrixKodInput && form) {
+                            shtrixKodInput.addEventListener("input", function () {
+                            if (shtrixKodInput.value.trim() !== "") {
+                                form.submit();
+                            }
+                        });
+                        }
+                    });
+                </script>
+                <!--<div class="mr-2" style="margin-right: 10px">
                     <input type="submit" class="btn btn-success" th:value="#{save}">
                 </div>
-                <br>
+                <br>-->
                 <div class="mr-2" style="margin-left: 150px">
                     <input type="hidden" name="_csrf" th:value="${_csrf.token}" id="csrfToken">
                     <input type="hidden" name="id" th:value="${response.data.id}" id="dataId">

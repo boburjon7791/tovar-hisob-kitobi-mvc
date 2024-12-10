@@ -7,6 +7,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.Rasxod
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.filtering.RasxodTovarFiltering;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service.RasxodTovarService;
+import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, RasxodTovarRequestDTO, RasxodTovarResponseDTO, RasxodTovarFiltering> {
     public static final String _apiPrefix="/rasxod-tovar";
     private final RasxodTovarService rasxodTovarService;
+    private final UserService userService;
     @Override
     public String apiPrefix() {
         return _apiPrefix;
@@ -69,5 +71,13 @@ public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, 
     public String deleteDetail(@RequestParam UUID detailId, @RequestParam UUID rasxodTovarId){
         rasxodTovarService.deleteDetail(detailId, rasxodTovarId);
         return redirectForm(rasxodTovarId);
+    }
+
+    @Override
+    @GetMapping("/list")
+    public String findAll(RasxodTovarFiltering request, Model model) {
+        String response = super.findAll(request, model);
+        addUsers(model, userService);
+        return response;
     }
 }

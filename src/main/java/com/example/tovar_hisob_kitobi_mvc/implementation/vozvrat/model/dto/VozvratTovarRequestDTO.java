@@ -11,13 +11,18 @@ public record VozvratTovarRequestDTO(
         @NotNull
         UUID vozvratTovarId,
 
-        @NotNull
+        UUID vozvratTovarDetailId,
+
         Long tovarId,
+
+        String shtrixKod,
 
         @Positive
         BigDecimal miqdori,
 
         @PositiveOrZero
-        BigDecimal summasi
+        BigDecimal summasi,
+
+        String izoh
 ) {
 }

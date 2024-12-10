@@ -1,5 +1,6 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.prixod.service;
 
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarDetailResponseDTO;
@@ -13,6 +14,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarServ
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +50,7 @@ public class PrixodTovarDetailService extends BaseService<PrixodTovarDetail, UUI
             throw new ApiException(getLocalization().getMessage("prixod_allaqachon_tasdiqlangan"));
         }
         Tovar tovar = tovarService.findByShtrixKod(requestDTO.shtrixKod());
-        List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(requestDTO.prixodTovarId());
+        List<PrixodTovarDetail> prixodTovarDetails = prixodTovarDetailRepository.findAllByPrixodTovarId(requestDTO.prixodTovarId(), Sort.unsorted());
         prixodTovarDetails.stream()
                 .filter(prixodTovarDetail -> prixodTovarDetail.getTovar().getShtrixKod().equals(requestDTO.shtrixKod()))
                 .findFirst()
@@ -70,7 +72,7 @@ public class PrixodTovarDetailService extends BaseService<PrixodTovarDetail, UUI
     }
 
     public void deleteAllByPrixodTovarId(UUID prixodTovarId) {
-        prixodTovarService.getPrixodTovarDetailRepository().findAllByPrixodTovarId(prixodTovarId)
+        prixodTovarService.getPrixodTovarDetailRepository().findAllByPrixodTovarId(prixodTovarId, Sort.unsorted())
                 .forEach(prixodTovarDetail -> {
                     prixodTovarDetail.setDeleted(true);
                     prixodTovarService.getPrixodTovarDetailRepository().save(prixodTovarDetail);

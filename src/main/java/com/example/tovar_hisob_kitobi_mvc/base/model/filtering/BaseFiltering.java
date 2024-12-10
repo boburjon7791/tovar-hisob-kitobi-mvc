@@ -17,4 +17,5 @@ public class BaseFiltering {
     private LocalDate fromDate;
     private LocalDate toDate;
     private boolean all;
+    private Long userId;
 }

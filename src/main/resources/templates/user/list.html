@@ -41,7 +41,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="/tovar/list" method="get" enctype="application/x-www-form-urlencoded">
+        <form action="/user/list" method="get" enctype="application/x-www-form-urlencoded">
             <div class="d-flex" style="margin-bottom: 10px">
                 <div class="mr-2" style="margin-right: 10px">
                     <input class="form-control w-auto" type="date" name="fromDate" th:value="${request.fromDate}">
@@ -66,7 +66,7 @@
                 <input type="submit" style="margin-right: 30px" class="btn btn-success" th:value="#{search}">
                 <br>
                 <div class="mr-2">
-                    <a class="btn btn-primary" href="/tovar/create" th:text="#{create}"></a>
+                    <a class="btn btn-primary" href="/user/create" th:text="#{create}"></a>
                 </div>
             </div>
         </form>
@@ -79,23 +79,40 @@
             <thead>
             <tr>
                 <th><h3 th:text="#{id}"></h3></th>
-                <th><h3 th:text="#{rasm}"></h3></th>
-                <th><h3 th:text="#{nomi}"></h3></th>
-                <th><h3 th:text="#{prixod_summa}"></h3></th>
-                <th><h3 th:text="#{rasxod_summa}"></h3></th>
-                <th><h3 th:text="#{ostatka}"></h3></th>
-                <th><h3 th:text="#{olchov_birligi}"></h3></th>
+                <th><h3 th:text="#{added}"></h3></th>
+                <th><h3 th:text="#{ism}"></h3></th>
+                <th><h3 th:text="#{familya}"></h3></th>
+                <th><h3 th:text="#{_login}"></h3></th>
+                <th><h3 th:text="#{telefon}"></h3></th>
+                <th><h3 th:text="#{lavozim}"></h3></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="r:${response.data}">
-                <td><h3><a th:text="${r.id}"></a></h3></td>
-                <td><a th:href="'/tovar/find/'+${r.id}"><img th:src="'/tovar/image/'+${r.rasm}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
-                <td><h3 th:text="${r.nomi}"></h3></td>
-                <td><h3 th:text="${r.prixodSumma}"></h3></td>
-                <td><h3 th:text="${r.rasxodSumma}"></h3></td>
-                <td><h3 th:text="${r.ostatka}"></h3></td>
-                <td><h3 th:text="${r.olchovBirligi}"></h3></td>
+                <td><a th:href="'/user/find/'+${r.id}"><h3 th:text="${r.id}"></h3></a></td>
+                <td><h3 th:text="${r.createdAt}"></h3></td>
+                <td><h3 th:text="${r.ism}"></h3></td>
+                <td><h3 th:text="${r.familya}"></h3></td>
+                <td><h3 th:text="${r.login}"></h3></td>
+                <td><h3 th:text="${r.telefonRaqam}"></h3></td>
+                <td>
+                    <form action="/user/change-role" method="post" enctype="application/x-www-form-urlencoded">
+                        <div class="d-flex">
+                            <div class="mr-2">
+                                <input type="text" class="form-control w-auto" th:if="${currentUser.user.id.equals(r.id)}" th:value="${r.lavozim}" readonly>
+                                <select class="form-control w-auto" name="lavozim" th:unless="${currentUser.user.id.equals(r.id)}">
+                                    <option th:each="l:${r.lavozimlar}" th:text="#{${l}}" th:value="${l}"></option>
+                                </select>
+                                <input type="hidden" name="id" th:value="${r.id}">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                            </div>
+                            <div class="mr-2" style="margin-left: 20px">
+<!--                                <input th:if="${currentUser.user.id.equals(r.id)}" type="button" class="btn btn-warn" th:value="#{change}">-->
+                                <input th:unless="${currentUser.user.id.equals(r.id)}" type="submit" class="btn btn-success" th:value="#{change}">
+                            </div>
+                        </div>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

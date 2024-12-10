@@ -1,5 +1,6 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.user.model.mapper;
 
+import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.model.mapper.BaseMapper;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserResponseDTO;
@@ -16,7 +17,7 @@ public class UserMapper implements BaseMapper<User, UserRequestDTO, UserResponse
 
     @Override
     public UserResponseDTO toDto(User user) {
-        return new UserResponseDTO(user.getId(), user.getCreatedAt(), user.getUpdatedAt(), user.getCreatedBy(), user.getUpdatedBy(), null, null, user.getIsm(), user.getFamilya(), user.getLogin(), user.getTelefonRaqam(), user.getLavozim());
+        return new UserResponseDTO(user.getId(), Utils.formatDate(user.getCreatedAt()), Utils.formatDate(user.getUpdatedAt()), user.getCreatedBy(), user.getUpdatedBy(), null, null, user.getIsm(), user.getFamilya(), user.getLogin(), user.getTelefonRaqam(), user.getLavozim(),null);
     }
 
     @Override

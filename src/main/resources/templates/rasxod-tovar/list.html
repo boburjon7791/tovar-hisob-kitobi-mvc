@@ -51,18 +51,16 @@
                     <input type="date" class="form-control w-auto" name="toDate" th:value="${request.toDate}">
                 </div>
                 <br>
-                <div class="mr-2" style="margin-right: 10px">
+                <!--<div class="mr-2" style="margin-right: 10px">
                     <input type="text" class="form-control w-auto" name="search" th:value="${request.search}">
                 </div>
-                <br>
-                <!--<div class="mr-2" style="margin-right: 10px">
-                    <select class="form-control w-auto" name="month" required>
-                        &lt;!&ndash;<option th:each="l:${langs}" th:text="#{l}" th:value="${l}"
-                                th:attr="selected=${m.name() == #localeContext.locale.displayName ? 'selected' : ''}">
-                        </option>&ndash;&gt;
+                <br>-->
+                <div class="mr-2" style="margin-right: 10px">
+                    <select class="form-control w-auto" name="userId">
+                        <option th:each="u:${users}" th:text="${u.familya+' '+u.ism}" th:value="${u.id}"></option>
                     </select>
                 </div>
-                <br>-->
+                <br>
                 <input type="submit" style="margin-right: 30px" class="btn btn-success" th:value="#{search}">
                 <br>
                 <div class="mr-2">
@@ -80,6 +78,7 @@
             <tr>
                 <th><h3 th:text="#{id}"></h3></th>
                 <th><h3 th:text="#{status}"></h3></th>
+                <th><h3>#</h3></th>
                 <th><h3 th:text="#{total_summa}"></h3></th>
                 <th><h3 th:text="#{created_at}"></h3></th>
                 <th><h3 th:text="#{created_by}"></h3></th>
@@ -93,6 +92,13 @@
                 <td>
                     <button type="button" th:if="${r.tasdiqlandi}" class="btn btn-success" th:text="#{confirmed}"></button>
                     <a type="button" th:href="'/rasxod-tovar/form/'+${r.id}" th:unless="${r.tasdiqlandi}" class="btn btn-danger" th:text="#{not_confirmed}"></a>
+                </td>
+                <td>
+                    <a type="button" target="_blank" th:href="'/vozvrat-tovar/start/'+${r.id}" th:if="${r.tasdiqlandi}" class="btn btn-danger" th:text="#{vozvrat}"></a>
+                    <form th:unless="${r.tasdiqlandi}" th:action="'/rasxod-tovar/delete/'+${r.id}" method="post" enctype="application/x-www-form-urlencoded">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                        <input type="submit" class="btn btn-danger" th:value="#{delete}">
+                    </form>
                 </td>
                 <td><h3 th:text="${r.totalSumma}"></h3></td>
                 <td><h3 th:text="${r.createdAt}"></h3></td>

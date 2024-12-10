@@ -1,5 +1,6 @@
 package com.example.tovar_hisob_kitobi_mvc.implementation.user.controller;
 
+import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.common.security.CustomUserDetails;
 import com.example.tovar_hisob_kitobi_mvc.base.controller.BaseControllerMVC;
@@ -7,6 +8,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.ChangePa
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserResponseDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.entity.User;
+import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.entity.enums.Lavozim;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.filtering.UserFiltering;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import jakarta.validation.Valid;
@@ -14,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(UserController._apiPrefix)
@@ -37,6 +36,12 @@ public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO
         return userResponseDTO.id();
     }
 
+    @GetMapping("/change-password/{id}")
+    public String changePassword(Model model, @PathVariable Long id){
+        model.addAttribute("id",id);
+        return "auth/change-password";
+    }
+
     @PostMapping("/change-password")
     public String changePassword(@ModelAttribute @Valid ChangePasswordRequestDTO requestDTO, Model model){
         userService.changePassword(requestDTO);
@@ -46,7 +51,14 @@ public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO
 
     @GetMapping("/profile")
     public String myAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model){
-        model.addAttribute(_response, userService.getBaseMapper().toDto(customUserDetails.user()));
+        UserResponseDTO responseDTO = userService.getBaseMapper().toDto(customUserDetails.user());
+        model.addAttribute(_response, ApiResponse.ok(responseDTO));
         return apiPrefix()+"/about";
+    }
+
+    @PostMapping("/change-role")
+    public String changeRole(@RequestParam Lavozim lavozim, @RequestParam Long id){
+        userService.changeRole(id, lavozim);
+        return redirectList();
     }
 }

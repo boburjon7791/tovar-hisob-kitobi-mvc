@@ -108,13 +108,14 @@ public class TovarService extends BaseService<Tovar, Long, TovarRequestDTO, Tova
     public void subtractKol(Tovar tovar, BigDecimal kol){
         BigDecimal subtracted = tovar.getOstatkasi().subtract(kol);
         if (subtracted.compareTo(BigDecimal.ZERO)<0) {
-            throw new ApiException(getLocalization().getMessage("ostatka_can_not_be_less_then_zero")+" "+kol+", "+tovar.getNomi()+" "+tovar.getOstatkasi());
+            throw new ApiException(getLocalization().getMessage("ostatka_can_not_be_less_then_zero")+". "+kol+", "+tovar.getNomi()+" : "+tovar.getOstatkasi());
         }
         tovar.setOstatkasi(subtracted);
         getBaseRepository().save(tovar);
     }
 
     public Tovar findByShtrixKod(String shtrixKod){
-        return tovarRepository.findByShtrixKod(shtrixKod).orElseThrow(() -> new ApiException(getLocalization().getMessage("not_found")));
+        String message = getLocalization().getMessage("not_found");
+        return tovarRepository.findByShtrixKod(shtrixKod).orElseThrow(() -> new ApiException(entityLocalizationName()+" "+message));
     }
 }
