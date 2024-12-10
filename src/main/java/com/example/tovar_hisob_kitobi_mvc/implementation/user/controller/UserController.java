@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(UserController._apiPrefix)
 @RequiredArgsConstructor
 public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO, UserResponseDTO, UserFiltering> {
-    public static final String _apiPrefix="/user";
+    public static final String _apiPrefix="user";
 
     private final UserService userService;
 

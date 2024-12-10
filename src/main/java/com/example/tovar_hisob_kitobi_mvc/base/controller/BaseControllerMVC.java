@@ -33,11 +33,11 @@ public abstract class BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, F
     public abstract ID getId(RESPONSE_DTO responseDto);
 
     public String redirectList(){
-        return "redirect:"+apiPrefix()+"/list";
+        return "redirect:/"+apiPrefix()+"/list";
     }
 
     public String redirectForm(ID id){
-        return "redirect:"+apiPrefix()+"/find/"+id;
+        return "redirect:/"+apiPrefix()+"/find/"+id;
     }
 
     @GetMapping("/create")

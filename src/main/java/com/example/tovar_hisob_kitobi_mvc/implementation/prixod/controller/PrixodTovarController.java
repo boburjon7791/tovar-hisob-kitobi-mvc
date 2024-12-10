@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping(PrixodTovarController._apiPrefix)
 @RequiredArgsConstructor
 public class PrixodTovarController extends BaseControllerMVC<PrixodTovar, UUID, PrixodTovarRequestDTO, PrixodTovarResponseDTO, PrixodTovarFiltering> {
-    public static final String _apiPrefix="/prixod-tovar";
+    public static final String _apiPrefix="prixod-tovar";
     private final PrixodTovarService prixodTovarService;
     private final UserService userService;
     @Override
@@ -28,11 +28,11 @@ public class PrixodTovarController extends BaseControllerMVC<PrixodTovar, UUID, 
     }
 
     public String redirectForm(UUID id){
-        return "redirect:"+apiPrefix()+"/form/"+id;
+        return "redirect:/"+apiPrefix()+"/form/"+id;
     }
 
     public String redirectAbout(UUID id){
-        return "redirect:"+apiPrefix()+"/about/"+id;
+        return "redirect:/"+apiPrefix()+"/about/"+id;
     }
 
     @Override

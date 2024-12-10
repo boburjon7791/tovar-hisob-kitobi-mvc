@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(TovarController._apiPrefix)
 @RequiredArgsConstructor
 public class TovarController extends BaseControllerMVC<Tovar, Long, TovarRequestDTO, TovarResponseDTO, TovarFiltering> {
-    public static final String _apiPrefix="/tovar";
+    public static final String _apiPrefix="tovar";
     private final TovarService tovarService;
     @Override
     public String apiPrefix() {

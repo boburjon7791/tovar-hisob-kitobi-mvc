@@ -33,7 +33,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final DataSource dataSource;
 
-    public static final String[] OPEN={"/favicon.ico","/images/**","/errors/**","/css/**","/js/**","/auth/register","/auth/login","/language/**"};
+    public static final String[] OPEN={"/static/favicon.ico","/images/**","/errors/**","/css/**","/js/**","/auth/register","/auth/login","/language/**"};
     public static final String[] CLOSED= {"/"};
 
     @Value(value = "${server.servlet.session.cookie.name}")

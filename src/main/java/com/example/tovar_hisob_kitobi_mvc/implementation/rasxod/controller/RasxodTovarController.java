@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping(RasxodTovarController._apiPrefix)
 @RequiredArgsConstructor
 public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, RasxodTovarRequestDTO, RasxodTovarResponseDTO, RasxodTovarFiltering> {
-    public static final String _apiPrefix="/rasxod-tovar";
+    public static final String _apiPrefix="rasxod-tovar";
     private final RasxodTovarService rasxodTovarService;
     private final UserService userService;
     @Override
@@ -28,11 +28,11 @@ public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, 
     }
 
     public String redirectForm(UUID id){
-        return "redirect:"+apiPrefix()+"/form/"+id;
+        return "redirect:/"+apiPrefix()+"/form/"+id;
     }
 
     public String redirectAbout(UUID id){
-        return "redirect:"+apiPrefix()+"/about/"+id;
+        return "redirect:/"+apiPrefix()+"/about/"+id;
     }
 
     @Override

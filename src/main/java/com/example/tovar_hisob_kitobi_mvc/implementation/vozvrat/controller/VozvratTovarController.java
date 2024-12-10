@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping(VozvratTovarController._apiPrefix)
 @RequiredArgsConstructor
 public class VozvratTovarController extends BaseControllerMVC<VozvratTovar, UUID, VozvratTovarRequestDTO, VozvratTovarResponseDTO, VozvratTovarFiltering> {
-    public static final String _apiPrefix="/vozvrat-tovar";
+    public static final String _apiPrefix="vozvrat-tovar";
     private final VozvratTovarService vozvratTovarService;
     private final UserService userService;
     @Override
@@ -28,11 +28,11 @@ public class VozvratTovarController extends BaseControllerMVC<VozvratTovar, UUID
     }
 
     public String redirectForm(UUID id){
-        return "redirect:"+apiPrefix()+"/form/"+id;
+        return "redirect:/"+apiPrefix()+"/form/"+id;
     }
 
     public String redirectAbout(UUID id){
-        return "redirect:"+apiPrefix()+"/about/"+id;
+        return "redirect:/"+apiPrefix()+"/about/"+id;
     }
 
     @Override
