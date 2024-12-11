@@ -102,9 +102,9 @@
                 </td>
                 <td><h3 th:text="${r.totalSumma}"></h3></td>
                 <td><h3 th:text="${r.createdAt}"></h3></td>
-                <td><h3 th:text="${r.createdByFullName}"></h3></td>
+                <td><a target="_blank" th:href="'/user/find/'+${r.createdBy}"><h3 th:text="${r.createdByFullName}"></h3></a></td>
                 <td><h3 th:text="${r.updatedAt}"></h3></td>
-                <td><h3 th:text="${r.updatedByFullName}"></h3></td>
+                <td><a target="_blank" th:href="'/user/find/'+${r.updatedBy}"><h3 th:text="${r.updatedByFullName}"></h3></a></td>
             </tr>
             </tbody>
         </table>

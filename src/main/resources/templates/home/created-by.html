@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{home}">Bosh sahifa</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" th:text="#{home}">Bosh sahifa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active"  aria-current="page" href="/user/profile" th:text="#{account}">Akkaunt</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/vozvrat-tovar/list" th:text="#{vozvrat}">Tovar qaytarilishi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"  href="/tovar/list" th:text="#{tovar}">Tovar</a>
+                </li>
+            </ul>
+            <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
+            <!--<form class="d-flex" action="#" role="search">
+                <input class="form-control me-2" type="search" name="name" required th:placeholder="#{input}" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" th:text="#{search}" type="submit">Qidirish</button>
+            </form>-->
+        </div>
+    </div>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <form action="/" method="get" enctype="application/x-www-form-urlencoded">
+            <div class="d-flex" style="margin-bottom: 10px">
+                <div class="mr-2" style="margin-right: 10px">
+                    <select class="form-control w-auto" name="type" required>
+                        <option th:each="t:${types}" th:text="#{${t}}" th:value="${t}"></option>
+                    </select>
+                </div>
+                <br>
+                <div class="mr-2" style="margin-right: 10px">
+                    <select class="form-control w-auto" name="year" required>
+                        <option th:each="y:${years}" th:text="${y}" th:value="${y}"></option>
+                    </select>
+                </div>
+                <br>
+                <input type="submit" class="btn btn-success" value="Qidirish">
+            </div>
+        </form>
+        <style>
+            th,td{
+                text-align: center;
+            }
+        </style>
+        <script src="/js/sock-js.js"></script>
+        <script src="/js/stomp-js.js"></script>
+        <input type="hidden" id="type" th:value="${type}">
+        <input type="hidden" id="year" th:value="${year}">
+        <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>-->
+        <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
+        <script>
+            const year =  document.getElementById('year').value;
+            const nowYear = new Date().getFullYear();
+            if(year==nowYear){
+            console.log('Year is continued : '+year +' ' +nowYear);
+            var socket = new SockJS('/websocket');
+            var stompClient = Stomp.over(socket);
+            var path=document.getElementById('type').value;
+            stompClient.connect({}, function(frame) {
+                stompClient.subscribe("/test/"+path,function(payload){
+<!--                    document.getElementById('text').innerText=payload.body-->
+                        console.log(payload.body)
+                        let data=JSON.parse(payload.body)
+                        updateTable(data)
+                })
+            });
+            // Jadvalni yangilash funksiyasi
+    function updateTable(data) {
+        // `tbody` elementni olish
+        const tbody = document.querySelector('table tbody');
+
+        // Tbody-ni tozalash
+        tbody.innerHTML = '';
+
+        let total = data.summa;
+
+        // Har bir element uchun jadvalga qator qo'shish
+        data.data.forEach(item => {
+            let row = `
+                <tr>
+                    <td><h3>${item.year}</h3></td>
+                    <td><h3>${item.month}</h3></td>
+                    <td><h3>${item.sum}</h3></td>
+                    <td><h3>${item.fullName}</h3></td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // Total qatorni yangilash
+        let totalRow = `
+            <tr>
+                <td></td>
+                <td></td>
+                <th id="total"><h3>${total}</h3></th>
+                <td></td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', totalRow);
+    }
+            }else{
+                console.log('stop')
+            }
+        </script>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th><h3 th:text="#{yil}"></h3></th>
+                <th><h3 th:text="#{oy}"></h3></th>
+                <th><h3 th:text="#{sum}"></h3></th>
+                <th><h3 th:text="#{created_by}"></h3></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r:${response.data}">
+                <td><h3 th:text="${r.getYear()}"></h3></td>
+                <td><h3 th:text="#{'m_'+${r.getMonth()}}"></h3></td>
+                <td><h3 th:text="${r.getSum()}"></h3></td>
+                <td><h3 th:text="${r.getFullName()}"></h3></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <th><h3 th:text="${total}"></h3></th>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

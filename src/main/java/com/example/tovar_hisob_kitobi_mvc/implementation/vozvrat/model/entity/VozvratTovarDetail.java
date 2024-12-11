@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @Where(clause = "deleted=false")
 public class VozvratTovarDetail extends BaseEntityUUID {
     @ManyToOne
-    @JoinColumn(name = "rasxod_tovar_id", nullable = false)
+    @JoinColumn(name = "vozvrat_tovar_id", nullable = false)
     private VozvratTovar vozvratTovar;
 
     @ManyToOne

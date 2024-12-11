@@ -2,8 +2,12 @@ package com.example.tovar_hisob_kitobi_mvc.implementation.prixod.service;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketMessageBrokerConfig;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.service.HomeService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarDetailResponseDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
@@ -11,17 +15,24 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.Pri
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.filtering.PrixodTovarFiltering;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.mapper.PrixodTovarMapper;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSumma;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.repository.PrixodTovarDetailRepository;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.repository.PrixodTovarRepository;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,6 +45,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
     private PrixodTovarMapper prixodTovarMapper;
     private final PrixodTovarDetailRepository prixodTovarDetailRepository;
     private final TovarService tovarService;
+    private final PrixodTovarRepository prixodTovarRepository;
 
     @Autowired
     public void setPrixodTovarMapper(@Lazy PrixodTovarMapper prixodTovarMapper) {
@@ -93,6 +105,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
             prixodTovarDetails.forEach(prixodTovarDetail -> {
                 tovarService.addKol(prixodTovarDetail.getTovar(), prixodTovarDetail.getMiqdori());
             });
+            changeHomeValue();
             return ApiResponse.ok(responseDTO);
         }
         throw new ApiException(getLocalization().getMessage("prixod_allaqachon_tasdiqlangan"));
@@ -114,5 +127,14 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
         prixodTovar.setDeleted(true);
         getBaseRepository().save(prixodTovar);
         return ApiResponse.ok();
+    }
+
+    private void changeHomeValue(){
+        int nowYear = Year.now().getValue();
+        int nowMonth = YearMonth.now().getMonthValue();
+        List<PrixodSumma> prixodSummaList = prixodTovarRepository.findAllPrixodSummaByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixod, WebSocketResponse.ofPrixod(prixodSummaList));
+        List<PrixodSummaByCreatedBy> prixodSummaByCreatedByList = prixodTovarRepository.findAllPrixodSummaByCreatedByByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixodByCreated, WebSocketResponse.ofPrixodCreated(prixodSummaByCreatedByList));
     }
 }

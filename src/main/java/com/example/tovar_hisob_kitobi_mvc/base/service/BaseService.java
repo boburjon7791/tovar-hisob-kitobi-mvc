@@ -9,30 +9,40 @@ import com.example.tovar_hisob_kitobi_mvc.base.model.entity.BaseEntity;
 import com.example.tovar_hisob_kitobi_mvc.base.model.mapper.BaseMapper;
 import com.example.tovar_hisob_kitobi_mvc.base.repository.BaseRepository;
 import com.example.tovar_hisob_kitobi_mvc.base.specification.BaseSpecification;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@RequiredArgsConstructor
 public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> {
     private BaseRepository<ENTITY, ID> baseRepository;
     private BaseMapper<ENTITY, REQUEST_DTO, RESPONSE_DTO> baseMapper;
     private BaseSpecification<ENTITY, FILTERING> baseSpecification;
     private Localization localization;
     private BaseControllerMVC<ENTITY,ID,REQUEST_DTO,RESPONSE_DTO,FILTERING> baseControllerMVC;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public void setSimpMessagingTemplate(@Lazy SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
 
     @Autowired
     public void setBaseControllerMVC(@Lazy BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, FILTERING> baseControllerMVC) {
@@ -111,7 +121,7 @@ public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERIN
     }
 
     public String entityLocalizationName(){
-        String entityName = baseControllerMVC.apiPrefix().substring(1).replaceAll("-", "_");
+        String entityName = baseControllerMVC.apiPrefix().replaceAll("-", "_");
         return localization.getMessage(entityName);
     }
 }

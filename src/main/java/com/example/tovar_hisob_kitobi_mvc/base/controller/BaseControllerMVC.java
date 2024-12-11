@@ -83,8 +83,6 @@ public abstract class BaseControllerMVC<ENTITY, ID, REQUEST_DTO, RESPONSE_DTO, F
 
     public void addUsers(Model model, UserService userService){
         String userId = Utils.request().getParameter("userId");
-        System.out.println("userId = " + userId);
-
         List<UserResponseDTO> users = userService.findAll();
         users.addFirst(UserResponseDTO.builder().ism("").familya("").build());
         if (userId!=null && !userId.isBlank()) {

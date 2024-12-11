@@ -99,7 +99,7 @@
                     <form action="/user/change-role" method="post" enctype="application/x-www-form-urlencoded">
                         <div class="d-flex">
                             <div class="mr-2">
-                                <input type="text" class="form-control w-auto" th:if="${currentUser.user.id.equals(r.id)}" th:value="${r.lavozim}" readonly>
+                                <input type="text" class="form-control w-auto" th:if="${currentUser.user.id.equals(r.id)}" th:value="#{${r.lavozim}}" readonly>
                                 <select class="form-control w-auto" name="lavozim" th:unless="${currentUser.user.id.equals(r.id)}">
                                     <option th:each="l:${r.lavozimlar}" th:text="#{${l}}" th:value="${l}"></option>
                                 </select>

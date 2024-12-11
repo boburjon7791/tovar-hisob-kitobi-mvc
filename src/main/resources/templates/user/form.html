@@ -35,10 +35,10 @@
                 </li>
             </ul>
             <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
-            <form class="d-flex" action="/tovar/list" role="search">
+            <!--<form class="d-flex" action="/tovar/list" role="search">
                 <input class="form-control me-2" type="search" name="search" required th:placeholder="#{input}" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" th:text="#{search}" type="submit"></button>
-            </form>
+            </form>-->
         </div>
     </div>
 </nav>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="mb-3">
                     <span th:text="#{parol}"></span>
-                    <input type="text" class="form-control" name="parol" th:placeholder="#{login}" required>
+                    <input type="password" class="form-control" name="parol" th:placeholder="#{login}" required>
                 </div>
                 <div class="mb-3">
                     <span th:text="#{telefon}"></span>

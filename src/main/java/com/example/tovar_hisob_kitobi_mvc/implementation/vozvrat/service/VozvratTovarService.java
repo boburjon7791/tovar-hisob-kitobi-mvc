@@ -2,9 +2,14 @@ package com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.service;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketMessageBrokerConfig;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovar;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSumma;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service.RasxodTovarService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratTovarDetailResponseDTO;
@@ -14,14 +19,19 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.entity.Vo
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.entity.VozvratTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.filtering.VozvratTovarFiltering;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.mapper.VozvratTovarMapper;
+import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.projection.VozvratSumma;
+import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.projection.VozvratSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.repository.VozvratTovarDetailRepository;
+import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.repository.VozvratTovarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,6 +44,7 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
     private final VozvratTovarDetailRepository vozvratTovarDetailRepository;
     private final TovarService tovarService;
     private final RasxodTovarService rasxodTovarService;
+    private final VozvratTovarRepository vozvratTovarRepository;
 
     @Autowired
     public void setVozvratTovarMapper(@Lazy VozvratTovarMapper vozvratTovarMapper) {
@@ -81,6 +92,7 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
             vozvratTovarDetails.forEach(vozvratTovarDetail -> {
                 tovarService.addKol(vozvratTovarDetail.getTovar(), vozvratTovarDetail.getMiqdori());
             });
+            changeHomeValue();
             return ApiResponse.ok(responseDTO);
         }
         throw new ApiException(getLocalization().getMessage("vozvrat_allaqachon_tasdiqlangan"));
@@ -101,6 +113,7 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
             vozvratTovar.setTotalSumma(vozvratTovarDetails.stream().map(VozvratTovarDetail::getSumma).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
             getBaseRepository().saveAndFlush(vozvratTovar);
         }
+        changeHomeValue();
         return findById(vozvratTovarId);
     }
 
@@ -120,5 +133,13 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
         List<VozvratTovarDetailResponseDTO> vozvratTovarDetails = vozvratTovarDetailRepository.findAllByVozvratTovarId(id, Utils.sortByCreatedAtDesc()).stream().map(vozvratTovarDetail -> vozvratTovarDetailService.getBaseMapper().toDto(vozvratTovarDetail)).toList();
         VozvratTovarResponseDTO responseDTO = vozvratTovarMapper.toDto(vozvratTovar, vozvratTovarDetails);
         return ApiResponse.ok(responseDTO);
+    }
+
+    private void changeHomeValue(){
+        int nowYear = Year.now().getValue();
+        List<VozvratSumma> vozvratSummaList = vozvratTovarRepository.findAllVozvratSummaByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvrat, WebSocketResponse.ofVozvrat(vozvratSummaList));
+        List<VozvratSummaByCreatedBy> vozvratSummaByCreatedByList = vozvratTovarRepository.findAllVozvratSummaByCreatedByByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvratByCreated, WebSocketResponse.ofVozvratCreated(vozvratSummaByCreatedByList));
     }
 }

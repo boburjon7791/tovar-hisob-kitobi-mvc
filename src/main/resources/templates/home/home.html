@@ -35,34 +35,27 @@
                 </li>
             </ul>
             <a th:href="'/language?lang='+${langs}+'&path='+${path}"><button type="button" class="btn btn-primary" style="margin-right: 10px" name="lang" th:text="#{${langs}}"></button></a>
-            <form class="d-flex" action="#" role="search">
+            <!--<form class="d-flex" action="#" role="search">
                 <input class="form-control me-2" type="search" name="name" required th:placeholder="#{input}" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" th:text="#{search}" type="submit">Qidirish</button>
-            </form>
+            </form>-->
         </div>
     </div>
 </nav>
 
 <div class="card">
     <div class="card-body">
-        <form action="/daily/report/get" method="get" enctype="application/x-www-form-urlencoded">
+        <form action="/" method="get" enctype="application/x-www-form-urlencoded">
             <div class="d-flex" style="margin-bottom: 10px">
                 <div class="mr-2" style="margin-right: 10px">
-                    <input class="form-control w-auto" type="date" name="year" required>
+                    <select class="form-control w-auto" name="type" required>
+                        <option th:each="t:${types}" th:text="#{${t}}" th:value="${t}"></option>
+                    </select>
                 </div>
                 <br>
                 <div class="mr-2" style="margin-right: 10px">
-                    <input type="date" class="form-control w-auto" name="month" required>
-                </div>
-                <br>
-                <div class="mr-2" style="margin-right: 10px">
-                    <input type="text" class="form-control w-auto" name="month" required>
-                </div>
-                <br>
-                <div class="mr-2" style="margin-right: 10px">
-                    <select class="form-control w-auto" name="month" required>
-                        <!--<option th:each="" th:text="" th:value="">
-                        </option>-->
+                    <select class="form-control w-auto" name="year" required>
+                        <option th:each="y:${years}" th:text="${y}" th:value="${y}"></option>
                     </select>
                 </div>
                 <br>
@@ -74,27 +67,83 @@
                 text-align: center;
             }
         </style>
+        <script src="/js/sock-js.js"></script>
+        <script src="/js/stomp-js.js"></script>
+        <input type="hidden" id="type" th:value="${type}">
+        <input type="hidden" id="year" th:value="${year}">
+<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>-->
+<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
+        <script>
+            const year =  document.getElementById('year').value;
+            const nowYear = new Date().getFullYear();
+            if(year==nowYear){
+                console.log('Year is continued :'+year +' ' +nowYear);
+            var socket = new SockJS('/websocket');
+            var stompClient = Stomp.over(socket);
+            var path=document.getElementById('type').value;
+            stompClient.connect({}, function(frame) {
+                stompClient.subscribe("/test/"+path,function(payload){
+<!--                    document.getElementById('text').innerText=payload.body-->
+                        console.log(payload.body)
+                        let data=JSON.parse(payload.body)
+                        updateTable(data)
+                })
+            });
+            // Jadvalni yangilash funksiyasi
+    function updateTable(data) {
+        // `tbody` elementni olish
+        const tbody = document.querySelector('table tbody');
+
+        // Tbody-ni tozalash
+        tbody.innerHTML = '';
+
+        let total = data.summa;
+
+        // Har bir element uchun jadvalga qator qo'shish
+        data.data.forEach(item => {
+            let row = `
+                <tr>
+                    <td><h3>${item.year}</h3></td>
+                    <td><h3>${item.month}</h3></td>
+                    <td><h3>${item.sum}</h3></td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // Total qatorni yangilash
+        let totalRow = `
+            <tr>
+                <td></td>
+                <td></td>
+                <th id="total"><h3>${total}</h3></th>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', totalRow);
+    }
+            }else{
+                console.log('stop')
+            }
+
+        </script>
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th><h3>Yil</h3></th>
-                <th><h3>Oy</h3></th>
-                <th><h3>Kun</h3></th>
-                <th><h3>Umumiy qiymati</h3></th>
+                <th><h3 th:text="#{yil}"></h3></th>
+                <th><h3 th:text="#{oy}"></h3></th>
+                <th><h3 th:text="#{sum}"></h3></th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="r:${reports}">
-                <td><h3><a th:text="${r.date.year}" th:href="@{'/monthly/report/get-year/'+${r.date.year}}"></a></h3></td>
-                <td><h3 th:text="${r.month.name()}"></h3></td>
-                <td><h3><a th:text="${r.date.dayOfMonth}" th:href="@{'/selling/get-date/'+${r.date.toLocalDate()}}"></a></h3></td>
-                <td><h3 th:text="${r.total}"></h3></td>
+            <tr th:each="r:${response.data}">
+                <td><h3 th:text="${r.getYear()}"></h3></td>
+                <td><h3 th:text="#{'m_'+${r.getMonth()}}"></h3></td>
+                <td><h3 th:text="${r.getSum()}"></h3></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
-                <td></td>
-                <th><h3 th:text="${total}"></h3></th>
+                <th id="total"><h3 th:text="${total}"></h3></th>
             </tr>
             </tbody>
         </table>

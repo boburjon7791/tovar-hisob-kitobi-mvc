@@ -18,7 +18,11 @@ import java.util.Arrays;
 
 public class Utils {
     public static CustomUserDetails customUserDetails(){
-        return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }catch (Exception e){
+            return null;
+        }
     }
     public static HttpServletRequest request(){
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();

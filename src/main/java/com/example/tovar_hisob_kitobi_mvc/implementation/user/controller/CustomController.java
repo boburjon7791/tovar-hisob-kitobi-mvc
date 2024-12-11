@@ -9,8 +9,4 @@ public class CustomController {
     public String login(){
         return "auth/login";
     }
-    @GetMapping
-    public String home(){
-        return "home";
-    }
 }

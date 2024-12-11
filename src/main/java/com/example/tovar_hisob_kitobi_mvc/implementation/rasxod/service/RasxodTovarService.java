@@ -2,11 +2,16 @@ package com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service;
 
 import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketMessageBrokerConfig;
+import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovarDetail;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSumma;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarDetailResponseDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarResponseDTO;
@@ -14,18 +19,24 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.Ras
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.filtering.RasxodTovarFiltering;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.mapper.RasxodTovarMapper;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSumma;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.repository.RasxodTovarDetailRepository;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.repository.RasxodTovarRepository;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -35,6 +46,7 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
     private RasxodTovarMapper rasxodTovarMapper;
     private final RasxodTovarDetailRepository rasxodTovarDetailRepository;
     private final TovarService tovarService;
+    private final RasxodTovarRepository rasxodTovarRepository;
 
     @Autowired
     public void setRasxodTovarMapper(@Lazy RasxodTovarMapper rasxodTovarMapper) {
@@ -76,6 +88,7 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
             rasxodTovarDetails.forEach(rasxodTovarDetail -> {
                 tovarService.subtractKol(rasxodTovarDetail.getTovar(), rasxodTovarDetail.getMiqdori());
             });
+            changeHomeValue();
             return ApiResponse.ok(responseDTO);
         }
         throw new ApiException(getLocalization().getMessage("rasxod_allaqachon_tasdiqlangan"));
@@ -115,5 +128,13 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
         List<RasxodTovarDetailResponseDTO> rasxodTovarDetails = rasxodTovarDetailRepository.findAllByRasxodTovarId(id, Utils.sortByCreatedAtDesc()).stream().map(rasxodTovarDetail -> rasxodTovarDetailService.getBaseMapper().toDto(rasxodTovarDetail)).toList();
         RasxodTovarResponseDTO responseDTO = rasxodTovarMapper.toDto(rasxodTovar, rasxodTovarDetails);
         return ApiResponse.ok(responseDTO);
+    }
+
+    private void changeHomeValue(){
+        int nowYear = Year.now().getValue();
+        List<RasxodSumma> rasxodSummaList = rasxodTovarRepository.findAllRasxodSummaByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxod, WebSocketResponse.ofRasxod(rasxodSummaList));
+        List<RasxodSummaByCreatedBy> rasxodSummaByCreatedByList = rasxodTovarRepository.findAllRasxodSummaByCreatedByByYear(nowYear);
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxodByCreated, WebSocketResponse.ofRasxodCreated(rasxodSummaByCreatedByList));
     }
 }
