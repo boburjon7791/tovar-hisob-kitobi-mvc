@@ -4,6 +4,7 @@ import com.example.tovar_hisob_kitobi_mvc.base.common.ApiResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.common.Utils;
 import com.example.tovar_hisob_kitobi_mvc.base.common.security.CustomUserDetails;
 import com.example.tovar_hisob_kitobi_mvc.base.controller.BaseControllerMVC;
+import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.ChangePasswordRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserRequestDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.model.dto.UserResponseDTO;
@@ -77,5 +78,10 @@ public class UserController extends BaseControllerMVC<User, Long, UserRequestDTO
     @PreAuthorize("hasAnyRole('DIRECTOR')")
     public String findAll(UserFiltering request, Model model) {
         return super.findAll(request, model);
+    }
+
+    @Override
+    public String deleteById(Long id) {
+        throw new RuntimeException();
     }
 }

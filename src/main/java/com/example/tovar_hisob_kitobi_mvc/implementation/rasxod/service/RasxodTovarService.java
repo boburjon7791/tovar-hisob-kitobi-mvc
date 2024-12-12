@@ -117,6 +117,9 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
     public ApiResponse<Void> deleteById(UUID id) {
         rasxodTovarDetailService.deleteAllByRasxodTovarId(id);
         RasxodTovar rasxodTovar = entity(id);
+        if (rasxodTovar.isTasdiqlandi()) {
+            throw new ApiException(getLocalization().getMessage("tasdiqlangan_tranzaksiyani_ochirib_bolmaydi"));
+        }
         rasxodTovar.setDeleted(true);
         getBaseRepository().save(rasxodTovar);
         return ApiResponse.ok();

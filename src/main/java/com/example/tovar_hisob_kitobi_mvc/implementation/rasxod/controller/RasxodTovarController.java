@@ -9,6 +9,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.filtering.
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service.RasxodTovarService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping(RasxodTovarController._apiPrefix)
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('DIRECTOR','KASSIR')")
 public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, RasxodTovarRequestDTO, RasxodTovarResponseDTO, RasxodTovarFiltering> {
     public static final String _apiPrefix="rasxod-tovar";
     private final RasxodTovarService rasxodTovarService;
@@ -55,10 +57,14 @@ public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, 
     }
 
     @Override
-    @PostMapping("/create")
     public String create(@ModelAttribute RasxodTovarRequestDTO requestDTO) {
         super.create(requestDTO);
         return redirectForm(requestDTO.rasxodTovarId());
+    }
+
+    @Override
+    public String findById(UUID id, Model model) {
+        return super.findById(id, model);
     }
 
     @PostMapping("/end")
@@ -74,7 +80,11 @@ public class RasxodTovarController extends BaseControllerMVC<RasxodTovar, UUID, 
     }
 
     @Override
-    @GetMapping("/list")
+    public String create() {
+        return super.create();
+    }
+
+    @Override
     public String findAll(RasxodTovarFiltering request, Model model) {
         String response = super.findAll(request, model);
         addUsers(model, userService);

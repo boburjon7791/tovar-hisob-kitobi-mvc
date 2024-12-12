@@ -52,6 +52,10 @@ public class UserService extends BaseService<User, Long, UserRequestDTO, UserRes
             throw new AccessDeniedException("");
         }
         User user = entity(requestDTO.id());
+        if (currentUser.getLavozim().equals(Lavozim.DIRECTOR) && !currentUser.getId().equals(requestDTO.id())){
+            user.setParol(passwordEncoder.encode(requestDTO.newPswd()));
+            return;
+        }
         if (!requestDTO.newPswd().equals(requestDTO.confirmPswd())) {
             throw new ApiException(getLocalization().getMessage("not_confirmed_pswd"));
         }

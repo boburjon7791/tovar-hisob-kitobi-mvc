@@ -9,6 +9,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.filtering.
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.service.PrixodTovarService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping(PrixodTovarController._apiPrefix)
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('DIRECTOR','SKLADCHI')")
 public class PrixodTovarController extends BaseControllerMVC<PrixodTovar, UUID, PrixodTovarRequestDTO, PrixodTovarResponseDTO, PrixodTovarFiltering> {
     public static final String _apiPrefix="prixod-tovar";
     private final PrixodTovarService prixodTovarService;
@@ -54,13 +56,15 @@ public class PrixodTovarController extends BaseControllerMVC<PrixodTovar, UUID, 
     }
 
     @Override
-    @PostMapping("/create")
     public String create(@ModelAttribute PrixodTovarRequestDTO requestDTO) {
         super.create(requestDTO);
         return redirectForm(requestDTO.prixodTovarId());
     }
 
-
+    @Override
+    public String create() {
+        return super.create();
+    }
 
     @PostMapping("/end")
     public String end(@RequestParam UUID id){
@@ -75,10 +79,19 @@ public class PrixodTovarController extends BaseControllerMVC<PrixodTovar, UUID, 
     }
 
     @Override
-    @GetMapping("/list")
     public String findAll(PrixodTovarFiltering request, Model model) {
         String response = super.findAll(request, model);
         addUsers(model, userService);
         return response;
+    }
+
+    @Override
+    public String findById(UUID id, Model model) {
+        return super.findById(id, model);
+    }
+
+    @Override
+    public String deleteById(UUID id) {
+        throw new RuntimeException();
     }
 }

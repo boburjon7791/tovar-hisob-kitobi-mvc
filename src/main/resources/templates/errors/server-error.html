@@ -22,10 +22,10 @@
                     <a class="nav-link active"  aria-current="page" href="/user/profile" th:text="#{account}">Akkaunt</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
+                    <a class="nav-link active" sec:authorize="hasAnyRole('DIRECTOR','SKLADCHI')"  href="/prixod-tovar/list" th:text="#{prixod}">Tovar kirishi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
+                    <a class="nav-link active" sec:authorize="hasAnyRole('DIRECTOR','KASSIR')"  href="/rasxod-tovar/list" th:text="#{rasxod}">Tovar chiqishi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active"  href="/vozvrat-tovar/list" th:text="#{vozvrat}">Tovar qaytarilishi</a>

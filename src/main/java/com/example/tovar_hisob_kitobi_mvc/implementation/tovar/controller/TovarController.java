@@ -35,4 +35,9 @@ public class TovarController extends BaseControllerMVC<Tovar, Long, TovarRequest
     public byte[] image(@PathVariable String image){
         return tovarService.getImage(image);
     }
+
+    @Override
+    public String deleteById(Long id) {
+        throw new RuntimeException();
+    }
 }

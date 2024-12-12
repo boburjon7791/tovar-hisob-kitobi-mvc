@@ -80,4 +80,9 @@ public class VozvratTovarController extends BaseControllerMVC<VozvratTovar, UUID
         addUsers(model, userService);
         return response;
     }
+
+    @Override
+    public String deleteById(UUID id) {
+        throw new RuntimeException();
+    }
 }
