@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         log.error("Handle : {0}",e);
         model.addAttribute(BaseControllerMVC._response, e.getMessage());
         addCustom(model);
-        return "/errors/server-error";
+        return "errors/server-error";
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         log.warn("Handle : {0}",e);
         model.addAttribute(BaseControllerMVC._response, e.getMessage());
         addCustom(model);
-        return "/errors/no-access";
+        return "errors/no-access";
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         log.warn("Handle : {0}",e);
         model.addAttribute(BaseControllerMVC._response, e.getMessage());
         addCustom(model);
-        return "/errors/not-found";
+        return "errors/not-found";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         List<ValidationErrorDTO> errorDTOList = e.getFieldErrors().stream().map(fieldError -> new ValidationErrorDTO(fieldError.getField(), fieldError.getDefaultMessage())).toList();
         model.addAttribute(BaseControllerMVC._response, errorDTOList);
         addCustom(model);
-        return "/errors/validation-error";
+        return "errors/validation-error";
     }
 
     @ExceptionHandler(ApiException.class)
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
         log.warn("Handle : {0}",e);
         model.addAttribute(BaseControllerMVC._response, e.getMessage());
         addCustom(model);
-        return "/errors/bad-request";
+        return "errors/bad-request";
     }
     public void addCustom(Model model){
         model.addAttribute("lang",customControllerAdvice.lang());
