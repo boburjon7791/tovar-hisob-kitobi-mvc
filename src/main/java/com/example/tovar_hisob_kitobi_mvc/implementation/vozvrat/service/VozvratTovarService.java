@@ -7,14 +7,13 @@ import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.service.HomeService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSumma;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.service.RasxodTovarService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.service.TovarService;
-import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratTovarDetailResponseDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratTovarRequestDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratTovarResponseDTO;
+import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.*;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.entity.VozvratTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.entity.VozvratTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.filtering.VozvratTovarFiltering;
@@ -45,6 +44,7 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
     private final TovarService tovarService;
     private final RasxodTovarService rasxodTovarService;
     private final VozvratTovarRepository vozvratTovarRepository;
+    private final HomeService homeService;
 
     @Autowired
     public void setVozvratTovarMapper(@Lazy VozvratTovarMapper vozvratTovarMapper) {
@@ -137,9 +137,9 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        List<VozvratSumma> vozvratSummaList = vozvratTovarRepository.findAllVozvratSummaByYear(nowYear);
+        List<VozvratSummaDTO> vozvratSummaList = homeService.vozvratSummaByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvrat, WebSocketResponse.ofVozvrat(vozvratSummaList));
-        List<VozvratSummaByCreatedBy> vozvratSummaByCreatedByList = vozvratTovarRepository.findAllVozvratSummaByCreatedByByYear(nowYear);
+        List<VozvratSummaByCreatedByDTO> vozvratSummaByCreatedByList = homeService.vozvratSummaByCreatedByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvratByCreated, WebSocketResponse.ofVozvratCreated(vozvratSummaByCreatedByList));
     }
 }

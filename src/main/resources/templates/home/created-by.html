@@ -138,10 +138,10 @@
             </thead>
             <tbody>
             <tr th:each="r:${response.data}">
-                <td><h3 th:text="${r.getYear()}"></h3></td>
-                <td><h3 th:text="#{'m_'+${r.getMonth()}}"></h3></td>
-                <td><h3 th:text="${r.getSum()}"></h3></td>
-                <td><h3 th:text="${r.getFullName()}"></h3></td>
+                <td><h3 th:text="${r.year}"></h3></td>
+                <td><h3 th:text="${r.month}"></h3></td>
+                <td><h3 th:text="${r.sum}"></h3></td>
+                <td><h3 th:text="${r.fullName}"></h3></td>
             </tr>
             <tr>
                 <td></td>

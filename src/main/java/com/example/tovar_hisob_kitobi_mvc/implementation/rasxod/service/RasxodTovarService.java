@@ -7,14 +7,13 @@ import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
+import com.example.tovar_hisob_kitobi_mvc.implementation.home.service.HomeService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSumma;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSummaByCreatedBy;
-import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarDetailResponseDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarRequestDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodTovarResponseDTO;
+import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.*;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.filtering.RasxodTovarFiltering;
@@ -47,6 +46,7 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
     private final RasxodTovarDetailRepository rasxodTovarDetailRepository;
     private final TovarService tovarService;
     private final RasxodTovarRepository rasxodTovarRepository;
+    private final HomeService homeService;
 
     @Autowired
     public void setRasxodTovarMapper(@Lazy RasxodTovarMapper rasxodTovarMapper) {
@@ -132,9 +132,9 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        List<RasxodSumma> rasxodSummaList = rasxodTovarRepository.findAllRasxodSummaByYear(nowYear);
+        List<RasxodSummaDTO> rasxodSummaList = homeService.rasxodSummaByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxod, WebSocketResponse.ofRasxod(rasxodSummaList));
-        List<RasxodSummaByCreatedBy> rasxodSummaByCreatedByList = rasxodTovarRepository.findAllRasxodSummaByCreatedByByYear(nowYear);
+        List<RasxodSummaByCreatedByDTO> rasxodSummaByCreatedByList = homeService.rasxodSummaByCreatedByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxodByCreated, WebSocketResponse.ofRasxodCreated(rasxodSummaByCreatedByList));
     }
 }

@@ -27,6 +27,3 @@ logging:
     root: info
   file:
     name: logging_folder/logging.log
-  logback:
-    rollingpolicy:
-      max-file-size: 10KB

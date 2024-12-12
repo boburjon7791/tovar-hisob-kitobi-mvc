@@ -8,9 +8,7 @@ import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
 import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
 import com.example.tovar_hisob_kitobi_mvc.implementation.home.service.HomeService;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarDetailResponseDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarRequestDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
+import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.*;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovarDetail;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.filtering.PrixodTovarFiltering;
@@ -46,6 +44,7 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
     private final PrixodTovarDetailRepository prixodTovarDetailRepository;
     private final TovarService tovarService;
     private final PrixodTovarRepository prixodTovarRepository;
+    private final HomeService homeService;
 
     @Autowired
     public void setPrixodTovarMapper(@Lazy PrixodTovarMapper prixodTovarMapper) {
@@ -131,10 +130,9 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        int nowMonth = YearMonth.now().getMonthValue();
-        List<PrixodSumma> prixodSummaList = prixodTovarRepository.findAllPrixodSummaByYear(nowYear);
+        List<PrixodSummaDTO> prixodSummaList = homeService.prixodSummaByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixod, WebSocketResponse.ofPrixod(prixodSummaList));
-        List<PrixodSummaByCreatedBy> prixodSummaByCreatedByList = prixodTovarRepository.findAllPrixodSummaByCreatedByByYear(nowYear);
+        List<PrixodSummaByCreatedByDTO> prixodSummaByCreatedByList = homeService.prixodSummaByCreatedByYear(nowYear).getData();
         getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixodByCreated, WebSocketResponse.ofPrixodCreated(prixodSummaByCreatedByList));
     }
 }
