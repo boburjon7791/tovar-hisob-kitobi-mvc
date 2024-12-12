@@ -19,7 +19,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Configuration
 @EnableScheduling
@@ -31,6 +36,7 @@ public class CronJobs {
     private final RasxodTovarDetailRepository rasxodTovarDetailRepository;
     private final VozvratTovarRepository vozvratTovarRepository;
     private final VozvratTovarDetailRepository vozvratTovarDetailRepository;
+    private static final String loggingFolder="logging_folder";
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional
@@ -48,5 +54,16 @@ public class CronJobs {
             vozvratTovarDetailRepository.findAllByVozvratTovarId(vozvratTovar.getId(), Sort.unsorted()).forEach(vozvratTovarDetailRepository::delete);
             vozvratTovarRepository.delete(vozvratTovar);
         });
+    }
+
+    @Transactional
+    @Scheduled(cron = "40 * * * * *")
+    public void deleteOldLogs(){
+        String localDate = LocalDate.now().minusMonths(1).toString();
+        for (File file : Objects.requireNonNullElse(new File(loggingFolder).listFiles(),new File[]{})) {
+            if (file.getName().contains(localDate)) {
+                System.out.println("file.delete() = " + file.delete());
+            }
+        }
     }
 }

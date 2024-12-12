@@ -22,3 +22,11 @@ server:
     session:
       cookie:
         name: TOVAR_HISOB_KITOB_MVC_SESSION_ID
+logging:
+  level:
+    root: info
+  file:
+    name: logging_folder/logging.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10KB

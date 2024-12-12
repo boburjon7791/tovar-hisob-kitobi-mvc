@@ -34,16 +34,14 @@ public class SecurityConfig {
     private final DataSource dataSource;
 
     public static final String[] OPEN={
-            "/static/favicon.ico",
+            "/favicon.ico",
             "/images/**",
             "/errors/**",
             "/css/**",
             "/js/**",
             "/auth/register",
             "/auth/login",
-            "/language/**",
-            "/home",
-            "/created-by"
+            "/language/**"
     };
     public static final String[] CLOSED= {"/"};
 

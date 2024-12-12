@@ -14,7 +14,11 @@ import org.hibernate.annotations.Where;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "unique_user_login", columnNames = {"login"})
+        }
+)
 @Where(clause = "deleted=false")
 public class User extends BaseEntityLongID {
     @Column(nullable = false)
