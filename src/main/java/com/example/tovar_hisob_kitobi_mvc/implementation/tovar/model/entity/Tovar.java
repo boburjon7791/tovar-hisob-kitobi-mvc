@@ -15,7 +15,11 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tovar")
+@Table(name = "tovar",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "unique_tovar_shtrix_kod", columnNames = {"shtrix_kod"})
+        }
+)
 @Where(clause = "deleted=false")
 public class Tovar extends BaseEntityLongID {
     @Column(nullable = false)

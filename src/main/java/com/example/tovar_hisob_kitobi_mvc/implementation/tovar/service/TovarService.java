@@ -10,6 +10,7 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.model.filtering.T
 import com.example.tovar_hisob_kitobi_mvc.implementation.tovar.repository.TovarRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Example;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,12 @@ public class TovarService extends BaseService<Tovar, Long, TovarRequestDTO, Tova
     }
     @Override
     public void checkCreating(TovarRequestDTO tovarRequestDTO) {
-
+        Tovar tovar=new Tovar();
+        tovar.setShtrixKod(tovarRequestDTO.shtrixKod());
+        tovar.setOstatkasi(null);
+        if (getBaseRepository().exists(Example.of(tovar))) {
+            throw new ApiException(getLocalization().getMessage("already_exists_tovar_by_shtrix_kod"));
+        }
     }
 
     @Override
