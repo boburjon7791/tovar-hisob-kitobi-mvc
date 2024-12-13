@@ -57,7 +57,7 @@ public class CronJobs {
     }
 
     @Transactional
-    @Scheduled(cron = "40 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void deleteOldLogs(){
         String localDate = LocalDate.now().minusMonths(1).toString();
         for (File file : Objects.requireNonNullElse(new File(loggingFolder).listFiles(),new File[]{})) {
