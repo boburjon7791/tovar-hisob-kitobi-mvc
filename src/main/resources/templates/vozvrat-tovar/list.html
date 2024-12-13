@@ -80,7 +80,7 @@
                 <th><h3 th:text="#{rasxod}"></h3></th>
                 <th><h3 th:text="#{status}"></h3></th>
                 <th><h3 th:text="#{total_summa}"></h3></th>
-                <th><h3 th:text="#{izoh}"></h3></th>
+<!--                <th><h3 th:text="#{izoh}"></h3></th>-->
                 <th><h3 th:text="#{created_at}"></h3></th>
                 <th><h3 th:text="#{created_by}"></h3></th>
                 <th><h3 th:text="#{updated_at}"></h3></th>
@@ -96,7 +96,10 @@
                     <a type="button" th:href="'/vozvrat-tovar/form/'+${r.id}" th:unless="${r.tasdiqlandi}" class="btn btn-danger" th:text="#{not_confirmed}"></a>
                 </td>
                 <td><h3 th:text="${r.totalSumma}"></h3></td>
-                <td><h3 th:text="${r.izoh}"></h3></td>
+<!--                <td><h3 th:text="${r.izoh}"></h3></td>-->
+                <!--<td>
+                    <textarea class="form-control w-auto" id="exampleFormControlTextarea1" th:text="${r.izoh}" rows="3"></textarea>
+                </td>-->
                 <td><h3 th:text="${r.createdAt}"></h3></td>
                 <td><a target="_blank" th:href="'/user/find/'+${r.createdBy}"><h3 th:text="${r.createdByFullName}"></h3></a></td>
                 <td><h3 th:text="${r.updatedAt}"></h3></td>

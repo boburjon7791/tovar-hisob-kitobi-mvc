@@ -16,6 +16,7 @@ public record TovarResponseDTO(
         BigDecimal rasxodSumma,
         String nomi,
         String shtrixKod,
-        String olchovBirligi
+        String olchovBirligi,
+        String izoh
 ) {
 }

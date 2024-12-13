@@ -93,7 +93,7 @@
             <tr th:each="r:${response.data}">
                 <td><h3><a th:text="${r.id}"></a></h3></td>
                 <td><h3 th:text="${r.createdAt}"></h3></td>
-                <td><a th:href="'/tovar/find/'+${r.id}"><img th:src="'/tovar/image/'+${r.rasm}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
+                <td><a th:href="'/tovar/find/'+${r.id}"><img th:src="'/tovar/image/'+${r.rasm}" onerror="this.onerror=null; this.src='/images/no-img.png'" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
                 <td><h3 th:text="${r.nomi}"></h3></td>
                 <td><h3 th:text="${r.shtrixKod}"></h3></td>
                 <td><h3 th:text="${r.prixodSumma}"></h3></td>

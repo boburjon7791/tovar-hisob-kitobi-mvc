@@ -23,7 +23,7 @@ public class TovarMapper implements BaseMapper<Tovar, TovarRequestDTO,TovarRespo
 
     @Override
     public TovarResponseDTO toDto(Tovar tovar){
-        return new TovarResponseDTO(tovar.getId(), Utils.formatDate(tovar.getCreatedAt()), Utils.formatDate(tovar.getUpdatedAt()), tovar.getCreatedBy(), tovar.getUpdatedBy(), null, null, tovar.getOstatkasi(), tovar.getRasmi(), tovar.getPrixodSumma(), tovar.getRasxodSumma(), tovar.getNomi(), tovar.getShtrixKod(), tovar.getOlchovBirligi());
+        return new TovarResponseDTO(tovar.getId(), Utils.formatDate(tovar.getCreatedAt()), Utils.formatDate(tovar.getUpdatedAt()), tovar.getCreatedBy(), tovar.getUpdatedBy(), null, null, tovar.getOstatkasi(), tovar.getRasmi(), tovar.getPrixodSumma(), tovar.getRasxodSumma(), tovar.getNomi(), tovar.getShtrixKod(), tovar.getOlchovBirligi(), tovar.getIzoh());
     }
 
     @Override

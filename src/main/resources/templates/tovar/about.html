@@ -56,7 +56,7 @@
                     <input type="text" class="form-control" name="nomi" th:placeholder="#{nomi}" th:value="${response.data.nomi}" required>
                 </div>
                 <div class="mb-3">
-                    <img th:src="'/tovar/image/'+${response.data.rasm}" class="rounded mx-auto d-block" style="width: 300px" alt="No image">
+                    <img th:src="'/tovar/image/'+${response.data.rasm}" onerror="this.onerror=null; this.src='/images/no-img.png'" class="rounded mx-auto d-block" style="width: 300px" alt="No image">
                     <span th:text="#{edit}"></span>
                     <input type="file" class="form-control" name="file" th:placeholder="#{rasm}">
                 </div>
@@ -79,6 +79,10 @@
                 <div class="mb-3">
                     <span th:text="#{olchov_birligi}"></span>
                     <input type="text" name="olchovBirligi" class="form-control" th:placeholder="#{olchov_birligi}" th:value="${response.data.olchovBirligi}" required>
+                </div>
+                <div class="mb-3">
+                    <span th:text="#{izoh}"></span>
+                    <textarea class="form-control" th:placeholder="#{izoh}" name="izoh" id="exampleFormControlTextarea1" th:text="${response.data.izoh}" rows="3"></textarea>
                 </div>
                 <div class="text-center">
                     <input type="submit" class="btn btn-success" th:value="#{edit}">

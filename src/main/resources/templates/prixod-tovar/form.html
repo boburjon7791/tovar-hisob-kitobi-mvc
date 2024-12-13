@@ -135,7 +135,7 @@
             </thead>
             <tbody>
             <tr th:each="r:${response.data.details}">
-                <td><a th:href="'/tovar/find/'+${r.tovarId}"><img th:src="'/tovar/image/'+${r.tovarRasmi}" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
+                <td><a th:href="'/tovar/find/'+${r.tovarId}"><img th:src="'/tovar/image/'+${r.tovarRasmi}" onerror="this.onerror=null; this.src='/images/no-img.png'" class="rounded mx-auto d-block" alt="Image no" style="width: 100px"></a></td>
                 <td><h3 th:text="${r.tovarNomi}"></h3></td>
                 <td><h3 th:text="${r.shtrixKod}"></h3></td>
                 <form action="/prixod-tovar/create" method="post" enctype="application/x-www-form-urlencoded">
