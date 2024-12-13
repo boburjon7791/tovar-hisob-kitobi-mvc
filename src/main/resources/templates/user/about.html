@@ -76,7 +76,7 @@
                     <input type="submit" class="btn btn-success" th:value="#{edit}">
                     <a sec:authorize="hasAnyRole('DIRECTOR')" href="/user/list"><button type="button" class="btn btn-primary" th:text="#{users}"></button></a>
                     <a href="/auth/logout" type="button" class="btn btn-danger" th:text="#{logout}"></a>
-                    <a href="/user/profile"><button type="button" class="btn btn-danger" th:text="#{cancel}"></button></a>
+                    <a th:href="'/user/find/'+${response.data.id}"><button type="button" class="btn btn-danger" th:text="#{cancel}"></button></a>
                 </div>
                 <br>
                 <a th:href="'/user/change-password/'+${response.data.id}" th:text="#{change_password}"></a>
