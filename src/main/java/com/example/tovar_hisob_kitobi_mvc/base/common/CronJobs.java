@@ -41,17 +41,17 @@ public class CronJobs {
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void deleteUnconfirmedTransactions(){
-        LocalDateTime lastUpdatedAt=LocalDateTime.now().minusMinutes(30);
+        LocalDateTime lastUpdatedAt=LocalDateTime.now().minusMinutes(1);
         prixodTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(prixodTovar -> {
-            prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovar.getId(), Sort.unsorted()).forEach(prixodTovarDetailRepository::delete);
+            prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovar.getId()).forEach(prixodTovarDetailRepository::delete);
             prixodTovarRepository.delete(prixodTovar);
         });
         rasxodTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(rasxodTovar -> {
-            rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovar.getId(), Sort.unsorted()).forEach(rasxodTovarDetailRepository::delete);
+            rasxodTovarDetailRepository.findAllByRasxodTovarId(rasxodTovar.getId()).forEach(rasxodTovarDetailRepository::delete);
             rasxodTovarRepository.delete(rasxodTovar);
         });
         vozvratTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(vozvratTovar -> {
-            vozvratTovarDetailRepository.findAllByVozvratTovarId(vozvratTovar.getId(), Sort.unsorted()).forEach(vozvratTovarDetailRepository::delete);
+            vozvratTovarDetailRepository.findAllByVozvratTovarId(vozvratTovar.getId()).forEach(vozvratTovarDetailRepository::delete);
             vozvratTovarRepository.delete(vozvratTovar);
         });
     }
