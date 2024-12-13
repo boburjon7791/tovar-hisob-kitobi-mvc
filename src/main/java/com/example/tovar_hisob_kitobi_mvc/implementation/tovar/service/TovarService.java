@@ -20,12 +20,14 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TovarService extends BaseService<Tovar, Long, TovarRequestDTO, TovarResponseDTO, TovarFiltering> {
     public static final String path="folder";
+    public static final List<String> FILE_FORMATS=List.of("jpg","jpeg","png");
     private final TovarRepository tovarRepository;
 
     static {
@@ -83,6 +85,9 @@ public class TovarService extends BaseService<Tovar, Long, TovarRequestDTO, Tova
     public String saveAndGetFilename(MultipartFile file){
         String filename = file.getOriginalFilename();
         String extension = filename.substring(filename.lastIndexOf("."));
+        if (FILE_FORMATS.stream().filter(extension::contains).findFirst().isEmpty()) {
+            throw new ApiException(getLocalization().getMessage("image_required"));
+        }
         String randomFileName= UUID.randomUUID()+extension;
         Files.copy(file.getInputStream(), Path.of(path+"/"+randomFileName), StandardCopyOption.REPLACE_EXISTING);
         return randomFileName;
