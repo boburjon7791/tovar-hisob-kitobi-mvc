@@ -31,7 +31,7 @@ public class Utils {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
     }
     public static String formatDate(LocalDateTime localDateTime){
-        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        return localDateTime==null? null:localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
     }
     public static Sort sortByCreatedAtDesc(){
         return Sort.by(Sort.Direction.DESC, BaseEntity._createdAt);
