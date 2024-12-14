@@ -28,6 +28,7 @@ public class CustomControllerAdvice {
         return languages.getFirst();
     }
 
+    @ModelAttribute("lang")
     public String lang(){
         return LocaleContextHolder.getLocale().getLanguage();
     }

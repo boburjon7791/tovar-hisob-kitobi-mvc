@@ -137,9 +137,19 @@ public class VozvratTovarService extends BaseService<VozvratTovar, UUID, Vozvrat
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        List<VozvratSummaDTO> vozvratSummaList = homeService.vozvratSummaByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvrat, WebSocketResponse.ofVozvrat(vozvratSummaList));
-        List<VozvratSummaByCreatedByDTO> vozvratSummaByCreatedByList = homeService.vozvratSummaByCreatedByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvratByCreated, WebSocketResponse.ofVozvratCreated(vozvratSummaByCreatedByList));
+
+        List<VozvratSumma> vozvratSummaProjectionList = vozvratTovarRepository.findAllVozvratSummaByYear(nowYear);
+
+        List<VozvratSummaDTO> vozvratSummaListUz = vozvratSummaProjectionList.stream().map(vozvratSumma -> VozvratSummaDTO.of(vozvratSumma, getLocalization(), getUzLocale())).toList();
+        List<VozvratSummaDTO> vozvratSummaListRu = vozvratSummaProjectionList.stream().map(vozvratSumma -> VozvratSummaDTO.of(vozvratSumma, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvrat+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofVozvrat(vozvratSummaListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvrat+"/"+getRuLocale().getLanguage(), WebSocketResponse.ofVozvrat(vozvratSummaListRu));
+
+        List<VozvratSummaByCreatedBy> vozvratSummaByCreatedByProjectionList = vozvratTovarRepository.findAllVozvratSummaByCreatedByByYear(nowYear);
+
+        List<VozvratSummaByCreatedByDTO> vozvratSummaByCreatedByListUz = vozvratSummaByCreatedByProjectionList.stream().map(vozvratSummaByCreatedBy -> VozvratSummaByCreatedByDTO.of(vozvratSummaByCreatedBy, getLocalization(), getUzLocale())).toList();
+        List<VozvratSummaByCreatedByDTO> vozvratSummaByCreatedByListRu = vozvratSummaByCreatedByProjectionList.stream().map(vozvratSummaByCreatedBy -> VozvratSummaByCreatedByDTO.of(vozvratSummaByCreatedBy, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvratByCreated+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofVozvratCreated(vozvratSummaByCreatedByListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._vozvratByCreated+"/"+getRuLocale().getLanguage(), WebSocketResponse.ofVozvratCreated(vozvratSummaByCreatedByListRu));
     }
 }

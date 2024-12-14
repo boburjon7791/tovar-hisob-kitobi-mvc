@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Getter
@@ -35,6 +36,8 @@ public abstract class BaseService<ENTITY,ID, REQUEST_DTO, RESPONSE_DTO, FILTERIN
     private Localization localization;
     private BaseControllerMVC<ENTITY,ID,REQUEST_DTO,RESPONSE_DTO,FILTERING> baseControllerMVC;
     private SimpMessagingTemplate simpMessagingTemplate;
+    private final Locale uzLocale = Locale.of("uz");
+    private final Locale ruLocale = Locale.of("ru");
 
     @PersistenceContext
     private EntityManager entityManager;

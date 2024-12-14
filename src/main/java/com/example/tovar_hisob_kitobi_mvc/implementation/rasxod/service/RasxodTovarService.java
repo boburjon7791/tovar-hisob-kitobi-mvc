@@ -6,13 +6,7 @@ import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketMessageBrokerConf
 import com.example.tovar_hisob_kitobi_mvc.base.common.WebSocketResponse;
 import com.example.tovar_hisob_kitobi_mvc.base.exception.ApiException;
 import com.example.tovar_hisob_kitobi_mvc.base.service.BaseService;
-import com.example.tovar_hisob_kitobi_mvc.implementation.home.controller.HomeController;
 import com.example.tovar_hisob_kitobi_mvc.implementation.home.service.HomeService;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodTovarResponseDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovar;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.entity.PrixodTovarDetail;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSumma;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.*;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovar;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.entity.RasxodTovarDetail;
@@ -27,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +28,6 @@ import java.math.BigDecimal;
 import java.time.Year;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -135,9 +127,19 @@ public class RasxodTovarService extends BaseService<RasxodTovar, UUID, RasxodTov
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        List<RasxodSummaDTO> rasxodSummaList = homeService.rasxodSummaByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxod, WebSocketResponse.ofRasxod(rasxodSummaList));
-        List<RasxodSummaByCreatedByDTO> rasxodSummaByCreatedByList = homeService.rasxodSummaByCreatedByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxodByCreated, WebSocketResponse.ofRasxodCreated(rasxodSummaByCreatedByList));
+
+        List<RasxodSumma> rasxodSummaProjectionList = rasxodTovarRepository.findAllRasxodSummaByYear(nowYear);
+
+        List<RasxodSummaDTO> rasxodSummaListUz = rasxodSummaProjectionList.stream().map(rasxodSumma -> RasxodSummaDTO.of(rasxodSumma, getLocalization(), getUzLocale())).toList();
+        List<RasxodSummaDTO> rasxodSummaListRu = rasxodSummaProjectionList.stream().map(rasxodSumma -> RasxodSummaDTO.of(rasxodSumma, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxod+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofRasxod(rasxodSummaListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxod+"/"+getRuLocale(), WebSocketResponse.ofRasxod(rasxodSummaListRu));
+
+        List<RasxodSummaByCreatedBy> rasxodSummaByCreatedByProjectionList = rasxodTovarRepository.findAllRasxodSummaByCreatedByByYear(nowYear);
+
+        List<RasxodSummaByCreatedByDTO> rasxodSummaByCreatedByListUz = rasxodSummaByCreatedByProjectionList.stream().map(rasxodSummaByCreatedBy -> RasxodSummaByCreatedByDTO.of(rasxodSummaByCreatedBy, getLocalization(), getUzLocale())).toList();
+        List<RasxodSummaByCreatedByDTO> rasxodSummaByCreatedByListRu = rasxodSummaByCreatedByProjectionList.stream().map(rasxodSummaByCreatedBy -> RasxodSummaByCreatedByDTO.of(rasxodSummaByCreatedBy, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxodByCreated+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofRasxodCreated(rasxodSummaByCreatedByListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._rasxodByCreated+"/"+getRuLocale().getLanguage(), WebSocketResponse.ofRasxodCreated(rasxodSummaByCreatedByListRu));
     }
 }

@@ -2,16 +2,10 @@ package com.example.tovar_hisob_kitobi_mvc.base.common;
 
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodSummaByCreatedByDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.dto.PrixodSummaDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSumma;
-import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection.PrixodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodSummaByCreatedByDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.dto.RasxodSummaDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSumma;
-import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSummaByCreatedBy;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratSummaByCreatedByDTO;
 import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.dto.VozvratSummaDTO;
-import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.projection.VozvratSumma;
-import com.example.tovar_hisob_kitobi_mvc.implementation.vozvrat.model.projection.VozvratSummaByCreatedBy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -130,9 +131,19 @@ public class PrixodTovarService extends BaseService<PrixodTovar, UUID, PrixodTov
 
     private void changeHomeValue(){
         int nowYear = Year.now().getValue();
-        List<PrixodSummaDTO> prixodSummaList = homeService.prixodSummaByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixod, WebSocketResponse.ofPrixod(prixodSummaList));
-        List<PrixodSummaByCreatedByDTO> prixodSummaByCreatedByList = homeService.prixodSummaByCreatedByYear(nowYear).getData();
-        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixodByCreated, WebSocketResponse.ofPrixodCreated(prixodSummaByCreatedByList));
+
+        List<PrixodSumma> prixodSummaProjectionList = prixodTovarRepository.findAllPrixodSummaByYear(nowYear);
+
+        List<PrixodSummaDTO> prixodSummaListUz = prixodSummaProjectionList.stream().map(prixodSumma -> PrixodSummaDTO.of(prixodSumma, getLocalization(), getUzLocale())).toList();
+        List<PrixodSummaDTO> prixodSummaListRu = prixodSummaProjectionList.stream().map(prixodSumma -> PrixodSummaDTO.of(prixodSumma, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixod+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofPrixod(prixodSummaListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixod+"/"+getRuLocale().getLanguage(), WebSocketResponse.ofPrixod(prixodSummaListRu));
+
+        List<PrixodSummaByCreatedBy> prixodSummaByCreatedByProjectionList = prixodTovarRepository.findAllPrixodSummaByCreatedByByYear(nowYear);
+
+        List<PrixodSummaByCreatedByDTO> prixodSummaByCreatedByListUz = prixodSummaByCreatedByProjectionList.stream().map(prixodSummaByCreatedBy -> PrixodSummaByCreatedByDTO.of(prixodSummaByCreatedBy, getLocalization(), getUzLocale())).toList();
+        List<PrixodSummaByCreatedByDTO> prixodSummaByCreatedByListRu = prixodSummaByCreatedByProjectionList.stream().map(prixodSummaByCreatedBy -> PrixodSummaByCreatedByDTO.of(prixodSummaByCreatedBy, getLocalization(), getRuLocale())).toList();
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixodByCreated+"/"+getUzLocale().getLanguage(), WebSocketResponse.ofPrixodCreated(prixodSummaByCreatedByListUz));
+        getSimpMessagingTemplate().convertAndSend(WebSocketMessageBrokerConfig._prixodByCreated+"/"+getRuLocale().getLanguage(), WebSocketResponse.ofPrixodCreated(prixodSummaByCreatedByListRu));
     }
 }

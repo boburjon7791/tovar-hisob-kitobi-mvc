@@ -5,9 +5,13 @@ import com.example.tovar_hisob_kitobi_mvc.implementation.prixod.model.projection
 import com.example.tovar_hisob_kitobi_mvc.implementation.rasxod.model.projection.RasxodSumma;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 public record PrixodSummaDTO(int year, String month, BigDecimal sum) {
     public static PrixodSummaDTO of(PrixodSumma rasxodSumma, Localization localization){
         return new PrixodSummaDTO(rasxodSumma.getYear(), localization.getMessage("m_"+rasxodSumma.getMonth()), rasxodSumma.getSum());
+    }
+    public static PrixodSummaDTO of(PrixodSumma rasxodSumma, Localization localization, Locale locale){
+        return new PrixodSummaDTO(rasxodSumma.getYear(), localization.getMessage("m_"+rasxodSumma.getMonth(), locale), rasxodSumma.getSum());
     }
 }

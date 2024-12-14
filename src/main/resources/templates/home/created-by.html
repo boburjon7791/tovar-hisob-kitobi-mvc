@@ -71,18 +71,20 @@
         <script src="/js/stomp-js.js"></script>
         <input type="hidden" id="type" th:value="${type}">
         <input type="hidden" id="year" th:value="${year}">
+        <input type="hidden" id="lang" th:value="${lang}">
         <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>-->
         <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
         <script>
             const year =  document.getElementById('year').value;
             const nowYear = new Date().getFullYear();
+            const lang = document.getElementById('lang').value;
             if(year==nowYear){
             console.log('Year is continued : '+year +' ' +nowYear);
             var socket = new SockJS('/websocket');
             var stompClient = Stomp.over(socket);
             var path=document.getElementById('type').value;
             stompClient.connect({}, function(frame) {
-                stompClient.subscribe("/test/"+path,function(payload){
+                stompClient.subscribe("/test/"+path+"/"+lang,function(payload){
 <!--                    document.getElementById('text').innerText=payload.body-->
                         console.log(payload.body)
                         let data=JSON.parse(payload.body)
