@@ -74,7 +74,7 @@ public class CronJobs {
         }
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 2 * * *")
     public void backupDatabase(){
         try {
             File backupFilesFolder = new File(BACKUP_FOLDER);
