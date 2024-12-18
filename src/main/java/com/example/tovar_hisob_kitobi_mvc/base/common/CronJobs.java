@@ -48,7 +48,7 @@ public class CronJobs {
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void deleteUnconfirmedTransactions(){
-        LocalDateTime lastUpdatedAt=LocalDateTime.now().minusMinutes(1);
+        LocalDateTime lastUpdatedAt=LocalDateTime.now().minusMinutes(30);
         prixodTovarRepository.findAllByUpdatedAtLessThanAndTasdiqlandiFalse(lastUpdatedAt).forEach(prixodTovar -> {
             prixodTovarDetailRepository.findAllByPrixodTovarId(prixodTovar.getId()).forEach(prixodTovarDetailRepository::delete);
             prixodTovarRepository.delete(prixodTovar);
